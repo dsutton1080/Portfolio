@@ -3,32 +3,53 @@ import React, { useEffect, useState } from "react";
 import { getAllSections } from "../../services";
 
 // Modular block component
-const Block = ({ header, content }: { header: string; content: string }) => {
+[
+  {
+    title: "STEM Experience",
+    header: "Black Data Processing Association",
+    subHeader: "National Programming Team, Project Manager, 2013-2017",
+    contents: [
+      {
+        content:
+          "Created backend portion of website for national competition and served as project manager for the team.",
+      },
+    ],
+  },
+];
+type SectionData = {
+  title: string;
+  header?: string;
+  subHeader?: string;
+  contents: { content: string }[];
+};
+
+const Block = ({ title, header, subHeader, contents }: SectionData) => {
   return (
     <div>
+      <h1>{title}</h1>
       <h2>{header}</h2>
-      <p>{content}</p>
+      <h4>{subHeader}</h4>
+
+      {contents && contents.map((item, index) => <p key={index}>{item.content}</p>)}
     </div>
   );
 };
 
 // Resume component
 function Resume() {
-  console.log("Resume rendered");
-  const [data, setData] = useState<{ header: string; content: string }[]>([]);
+  const [data, setData] = useState<SectionData[]>([]);
 
   useEffect(() => {
     const fetchSections = async () => {
       const sections = await getAllSections()
         .then((response) => {
-          console.log(response);
           return response;
         })
         .catch((error) => {
           console.error(error);
         });
-      if (JSON.stringify(sections) == JSON.stringify(data)) {
-        //Change to !=
+      if (JSON.stringify(sections) != JSON.stringify(data)) {
+        console.log("setting data");
         setData(sections);
       }
     };
@@ -36,28 +57,17 @@ function Resume() {
     fetchSections();
   }, [data]);
 
-  // return (
-  //     <div>
-  //         {data.map((item, index) => (
-  //             <Block key={index} header={item.header} content={item.content} />
-  //         ))}
-  //     </div>
-  // );
-
   return (
     <div>
-      <Block
-        header="Experience"
-        content="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-      />
-      <Block
-        header="Education"
-        content="Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      />
-      <Block
-        header="Skills"
-        content="Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-      />
+      {data.map((item, index) => (
+        <Block
+          key={index}
+          title={item.title}
+          header={item.header}
+          subHeader={item.subHeader}
+          contents={item.contents}
+        />
+      ))}
     </div>
   );
 }
