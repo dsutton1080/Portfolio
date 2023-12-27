@@ -1,32 +1,27 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { getAllSections } from "../../services";
 
-// Modular block component
-[
-  {
-    title: "STEM Experience",
-    header: "Black Data Processing Association",
-    subHeader: "National Programming Team, Project Manager, 2013-2017",
-    contents: [
-      {
-        content:
-          "Created backend portion of website for national competition and served as project manager for the team.",
-      },
-    ],
-  },
-];
+type ContentData = {
+  content: string;
+};
+
 type SectionData = {
   title: string;
   header?: string;
   subHeader?: string;
-  contents: { content: string }[];
+  contents: ContentData[];
 };
 
+type Sections = {
+  [key: string]: SectionData[];
+};
+
+// Modular block component
 const Block = ({ title, header, subHeader, contents }: SectionData) => {
   return (
-    <div>
-      <h1>{title}</h1>
+    <div style={{ marginBottom: "20px" }}>
       <h2>{header}</h2>
       <h4>{subHeader}</h4>
 
@@ -37,7 +32,7 @@ const Block = ({ title, header, subHeader, contents }: SectionData) => {
 
 // Resume component
 function Resume() {
-  const [data, setData] = useState<SectionData[]>([]);
+  const [data, setData] = useState<Sections>({});
 
   useEffect(() => {
     const fetchSections = async () => {
@@ -50,6 +45,7 @@ function Resume() {
         });
       if (JSON.stringify(sections) != JSON.stringify(data)) {
         console.log("setting data");
+        console.log(sections);
         setData(sections);
       }
     };
@@ -59,15 +55,16 @@ function Resume() {
 
   return (
     <div>
-      {data.map((item, index) => (
-        <Block
-          key={index}
-          title={item.title}
-          header={item.header}
-          subHeader={item.subHeader}
-          contents={item.contents}
-        />
-      ))}
+      {data &&
+        typeof data === "object" &&
+        Object.keys(data).map((sectionName) => (
+          <div key={sectionName}>
+            <h2>{sectionName}</h2>
+            {data[sectionName].map((sectionData, index) => (
+              <Block key={index} {...sectionData} />
+            ))}
+          </div>
+        ))}
     </div>
   );
 }
