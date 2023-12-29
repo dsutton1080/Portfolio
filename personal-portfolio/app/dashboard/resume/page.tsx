@@ -44,7 +44,6 @@ function Resume() {
           console.error(error);
         });
       if (JSON.stringify(sections) != JSON.stringify(data)) {
-        console.log("setting data");
         console.log(sections);
         setData(sections);
       }
