@@ -21,7 +21,7 @@ type Sections = {
 // Modular block component
 const Block = ({ title, header, subHeader, contents }: SectionData) => {
   return (
-    <div style={{ marginBottom: "20px" }}>
+    <div className="mb-5">
       <h2>{header}</h2>
       <h4>{subHeader}</h4>
 
@@ -68,4 +68,4 @@ function Resume() {
   );
 }
 
-export default React.memo(Resume);
+export default Resume;
