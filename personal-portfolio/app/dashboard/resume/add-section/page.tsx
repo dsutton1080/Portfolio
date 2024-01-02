@@ -1,24 +1,26 @@
 "use client";
+import { addSection, getSectionCount } from "@/app/services";
 
 import React, { useState } from "react";
 
 function AddSection() {
+  const [order, setOrder] = useState("");
   const [title, setTitle] = useState("");
   const [header, setHeader] = useState("");
   const [subHeader, setSubHeader] = useState("");
   const [contents, setContents] = useState([""]);
 
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-  };
-
-  const handleHeaderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHeader(event.target.value);
-  };
-
-  const handleSubHeaderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSubHeader(event.target.value);
-  };
+  interface Section {
+    order?: number;
+    title: string;
+    header: string;
+    subHeader: string;
+    contents: {
+      records: {
+        content: string;
+      }[];
+    };
+  }
 
   const handleContentChange = (index: number, event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContents = [...contents];
@@ -43,11 +45,26 @@ function AddSection() {
     setContents([""]);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(title, header, subHeader, contents);
+    let section: Section = {
+      title: title,
+      header: header,
+      subHeader: subHeader,
+      contents: {
+        records: contents.map((content) => ({ content: content })),
+      },
+    };
 
-    // handleReset();
+    if (order) {
+      section.order = parseInt(order);
+    } else {
+      section.order = (await getSectionCount()) + 1;
+    }
+
+    await addSection(section).then((response) => console.log(response));
+    handleReset();
   };
 
   return (
@@ -74,6 +91,8 @@ function AddSection() {
                   id="title"
                   autoComplete="off"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
                 />
               </div>
             </div>
@@ -89,6 +108,8 @@ function AddSection() {
                   type="text"
                   autoComplete="off"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={header}
+                  onChange={(event) => setHeader(event.target.value)}
                 />
               </div>
             </div>
@@ -107,6 +128,8 @@ function AddSection() {
                   id="subheader"
                   autoComplete="off"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={subHeader}
+                  onChange={(event) => setSubHeader(event.target.value)}
                 />
               </div>
             </div>
@@ -167,18 +190,31 @@ function AddSection() {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
+                strokeWidth="1.5"
                 stroke="currentColor"
-                className="h-6 w-6"
+                className="w-6 h-6"
               >
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v12m-6-6h12"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
             </button>
+
+            <div className="sm:col-span-4">
+              <label htmlFor="order" className="block text-sm font-medium text-gray-700">
+                Order
+              </label>
+              <input
+                type="number"
+                id="order"
+                name="order"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                value={order}
+                onChange={(event) => setOrder(event.target.value)}
+              />
+            </div>
           </div>
         </div>
 

@@ -8,6 +8,7 @@ type ContentData = {
 };
 
 type SectionData = {
+  id: number;
   title: string;
   header?: string;
   subHeader?: string;
@@ -19,13 +20,19 @@ type Sections = {
 };
 
 // Modular block component
-const Block = ({ title, header, subHeader, contents }: SectionData) => {
+const Block = ({ header, subHeader, contents }: SectionData) => {
   return (
     <div className="mb-5">
-      <h2>{header}</h2>
-      <h4>{subHeader}</h4>
-
-      {contents && contents.map((item, index) => <p key={index}>{item.content}</p>)}
+      <h2 className="text-2xl">{header}</h2>
+      <h3 className="text-1xl italic">{subHeader}</h3>
+      <ul className="list-none list-inside">
+        {contents &&
+          contents.map((item, index) => (
+            <li key={index} className="text-base ml-4 mb-1">
+              {item.content}
+            </li>
+          ))}
+      </ul>
     </div>
   );
 };
@@ -58,7 +65,7 @@ function Resume() {
         typeof data === "object" &&
         Object.keys(data).map((sectionName) => (
           <div key={sectionName}>
-            <h2>{sectionName}</h2>
+            <h1 className="text-4xl font-bold">{sectionName}</h1>
             {data[sectionName].map((sectionData, index) => (
               <Block key={index} {...sectionData} />
             ))}
