@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { useRouter } from "next/navigation";
 import "./globals.css";
 import Link from "next/link";
+import Footer from "./footer";
 
 export const metadata: Metadata = {
   title: "Personal Portfolio",
@@ -25,9 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
           </header>
           <main className="flex min-h-screen flex-col justify-between p-24">{children}</main>
-          <footer className="flex items-center justify-center h-16 border-t">
-            <p>Footer</p>
-          </footer>
+          <Footer />
         </div>
       </body>
     </html>
