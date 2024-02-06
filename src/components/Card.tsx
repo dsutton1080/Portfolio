@@ -65,6 +65,21 @@ Card.Title = function CardTitle<T extends React.ElementType = 'h2'>({
   )
 }
 
+Card.Subtitle = function CardSubtitle<T extends React.ElementType = 'h3'>({
+  as,
+  children,
+}: Omit<React.ComponentPropsWithoutRef<T>, 'as'> & {
+  as?: T
+}) {
+  let Component = as ?? 'h3'
+
+  return (
+    <Component className="text-sm italic text-zinc-600 dark:text-zinc-400">
+      {children}
+    </Component>
+  )
+}
+
 Card.Description = function CardDescription({
   children,
 }: {
