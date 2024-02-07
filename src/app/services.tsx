@@ -44,6 +44,13 @@ const getExperiences = async () => {
     .catch((error) => console.error(error))
 }
 
+const addExperience = async (experience: any) => {
+  return axios
+    .post(url + '/experience', experience)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
 export {
   getAllSections,
   addSection,
@@ -51,4 +58,5 @@ export {
   deleteSection,
   getSectionCount,
   getExperiences,
+  addExperience,
 }

@@ -1,10 +1,86 @@
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+'use client'
 import { type Metadata } from 'next'
 
-import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
+import { useState } from 'react'
+import { addExperience, addSection } from '../services'
 
-export default function Example() {
+// export const metadata = {
+//   title: 'Admin',
+//   description: 'Forms to add new experiences and sections to the portfolio.',
+// }
+
+export default function AdminActions() {
+  const [experienceTitle, setExperienceTitle] = useState('')
+  const [experienceDate, setExperienceDate] = useState('')
+  const [experienceContent, setExperienceContent] = useState('')
+  const [sectionTitle, setSectionTitle] = useState('')
+  const [sectionOrder, setSectionOrder] = useState('')
+  const [sectionHeader, setSectionHeader] = useState('')
+  const [sectionSubHeader, setSectionSubHeader] = useState('')
+  const [sectionContent1, setSectionContent1] = useState('')
+  const [sectionContent2, setSectionContent2] = useState('')
+  const [sectionContent3, setSectionContent3] = useState('')
+
+  const handleExperienceSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    console.log('Experience submitted')
+
+    // Check if experienceDate matches the format 'YYYY-MM-DD'
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(experienceDate)) {
+      // Needs to be replaced with a banner message
+      // Also need to make the form input display an error message
+      console.log('Invalid date format')
+      return
+    }
+
+    let requestBody = {
+      title: experienceTitle,
+      date: experienceDate,
+      content: experienceContent,
+    }
+
+    await addExperience(requestBody)
+      .then((response) => {
+        console.log('Response:', response)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+
+    console.log('Request body:', requestBody)
+  }
+
+  const handleSectionSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    console.log('Section submitted') // Needs to be replaced with a banner message
+
+    let requestBody = {
+      title: sectionTitle,
+      order: sectionOrder,
+      header: sectionHeader,
+      subHeader: sectionSubHeader,
+      contents: {
+        records: [
+          { content: sectionContent1 },
+          { content: sectionContent2 },
+          { content: sectionContent3 },
+        ],
+      },
+    }
+
+    await addSection(requestBody)
+      .then((response) => {
+        console.log('Response:', response)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+
+    console.log('Request body:', requestBody)
+  }
+
   return (
     <SimpleLayout title="" intro="">
       <div className="md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
@@ -12,53 +88,76 @@ export default function Example() {
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
             <div className="px-4 sm:px-0">
               <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                Profile
+                Add Experience
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                This information will be displayed publicly so be careful what
-                you share.
+                This is a form to add a new experience to the portfolio.
               </p>
             </div>
 
-            <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 dark:bg-gray-800">
+            <form
+              onSubmit={handleExperienceSubmit}
+              className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 dark:bg-gray-800"
+            >
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-4">
+                  <div className="col-span-full">
                     <label
-                      htmlFor="website"
+                      htmlFor="title"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      Website
+                      Title
                     </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <input
-                          type="text"
-                          name="website"
-                          id="website"
-                          className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
-                        />
-                      </div>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <input
+                        type="text"
+                        name="title"
+                        id="title"
+                        value={experienceTitle}
+                        onChange={(e) => setExperienceTitle(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
                     </div>
                   </div>
 
                   <div className="col-span-full">
                     <label
-                      htmlFor="about"
+                      htmlFor="date"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      About
+                      Date
                     </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <textarea
-                          id="about"
-                          name="about"
-                          rows={3}
-                          className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
-                          defaultValue={''}
-                        />
-                      </div>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <input
+                        type="text"
+                        name="date"
+                        id="date"
+                        placeholder="YYYY-MM-DD"
+                        value={experienceDate}
+                        onChange={(e) => setExperienceDate(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    {' '}
+                    {/* Updated */}
+                    <label
+                      htmlFor="content"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    >
+                      Content
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <textarea
+                        id="content"
+                        name="content"
+                        rows={2}
+                        value={experienceContent}
+                        onChange={(e) => setExperienceContent(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
                     </div>
                   </div>
                 </div>
@@ -74,7 +173,7 @@ export default function Example() {
                   type="submit"
                   className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  Save
+                  Add
                 </button>
               </div>
             </form>
@@ -83,161 +182,158 @@ export default function Example() {
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
             <div className="px-4 sm:px-0">
               <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                Personal Information
+                Add Section
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                Secondary information for your profile.
+                This is a form to add a new section to the Resume.
               </p>
             </div>
 
-            <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 dark:bg-gray-800 dark:ring-gray-700">
+            <form
+              onSubmit={handleSectionSubmit}
+              className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 dark:bg-gray-800 dark:ring-gray-700"
+            >
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
+                  <div className="sm:col-span-5">
                     <label
-                      htmlFor="first-name"
+                      htmlFor="title"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                     >
-                      First name
+                      Title
                     </label>
                     <div className="mt-2">
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
                           type="text"
-                          name="first-name"
-                          id="first-name"
-                          autoComplete="given-name"
+                          name="title"
+                          id="title"
+                          autoComplete="off"
+                          value={sectionTitle}
+                          onChange={(e) => setSectionTitle(e.target.value)}
                           className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="sm:col-span-3">
+                  <div className="sm:col-span-1">
                     <label
-                      htmlFor="last-name"
+                      htmlFor="order"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                     >
-                      Last name
+                      Order
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                       <input
                         type="text"
-                        name="last-name"
-                        id="last-name"
-                        autoComplete="family-name"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
+                        name="order"
+                        id="order"
+                        autoComplete="off"
+                        value={sectionOrder}
+                        onChange={(e) => setSectionOrder(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-4">
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                    >
-                      Email address
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-4">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                    >
-                      Country
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="country"
-                        name="country"
-                        autoComplete="country-name"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
-                      >
-                        <option>United States</option>
-                        <option>Canada</option>
-                        <option>Mexico</option>
-                      </select>
                     </div>
                   </div>
 
                   <div className="col-span-full">
                     <label
-                      htmlFor="street-address"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                      htmlFor="header"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      Street address
+                      Header
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                       <input
                         type="text"
-                        name="street-address"
-                        id="street-address"
-                        autoComplete="street-address"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
+                        name="header"
+                        id="header"
+                        value={sectionHeader}
+                        onChange={(e) => setSectionHeader(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2 sm:col-start-1">
+                  <div className="col-span-full">
                     <label
-                      htmlFor="city"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                      htmlFor="subHeader"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      City
+                      Sub Header
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                       <input
                         type="text"
-                        name="city"
-                        id="city"
-                        autoComplete="address-level2"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
+                        name="subHeader"
+                        id="subHeader"
+                        value={sectionSubHeader}
+                        onChange={(e) => setSectionSubHeader(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
+                  <div className="col-span-full">
+                    {' '}
+                    {/* Content 1 */}
                     <label
-                      htmlFor="region"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                      htmlFor="content1"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      State / Province
+                      Content 1
                     </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="region"
-                        id="region"
-                        autoComplete="address-level1"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <textarea
+                        id="content1"
+                        name="content1"
+                        rows={2}
+                        value={sectionContent1}
+                        onChange={(e) => setSectionContent1(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
+                  <div className="col-span-full">
+                    {' '}
+                    {/* Content 2 */}
                     <label
-                      htmlFor="postal-code"
-                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                      htmlFor="content2"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
-                      ZIP / Postal code
+                      Content 2
                     </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="postal-code"
-                        id="postal-code"
-                        autoComplete="postal-code"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:text-gray-100 dark:placeholder-gray-300 dark:ring-gray-700"
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <textarea
+                        id="content2"
+                        name="content2"
+                        rows={2}
+                        value={sectionContent2}
+                        onChange={(e) => setSectionContent2(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    {' '}
+                    {/* Content 3 */}
+                    <label
+                      htmlFor="content3"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    >
+                      Content 3
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <textarea
+                        id="content3"
+                        name="content3"
+                        rows={2}
+                        value={sectionContent3}
+                        onChange={(e) => setSectionContent3(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
                   </div>
@@ -254,7 +350,7 @@ export default function Example() {
                   type="submit"
                   className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  Save
+                  Add
                 </button>
               </div>
             </form>
