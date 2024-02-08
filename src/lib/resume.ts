@@ -1,5 +1,16 @@
 import { getAllSections } from '@/app/services'
 
+export interface Content {
+  id: number
+  content: string
+  order?: number
+}
+
+export interface Header {
+  id: number
+  header: string
+}
+
 export interface Section {
   id: number
   title: string

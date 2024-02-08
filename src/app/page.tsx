@@ -118,7 +118,7 @@ function Resume() {
     },
     {
       company: 'Grace Church',
-      title: 'Technical and Automation Consultant',
+      title: 'Technical/Automation Consultant',
       logo: graceLogo,
       start: '2023',
       end: {
