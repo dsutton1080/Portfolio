@@ -1,5 +1,4 @@
 'use client'
-import { type Metadata } from 'next'
 
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { useState, useEffect } from 'react'
@@ -15,15 +14,11 @@ import { Header, Content } from '@/lib/resume'
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { SuccessNotification, ErrorNotification } from '@/components/Alerts'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
-
-// export const metadata = {
-//   title: 'Admin',
-//   description: 'Forms to add new experiences and sections to the portfolio.',
-// }
 
 export default function AdminActions() {
   const [experienceTitle, setExperienceTitle] = useState('')
@@ -48,17 +43,22 @@ export default function AdminActions() {
   const [editingSectionContent3, setEditingSectionContent3] = useState('')
   const [headers, setHeaders] = useState<Header[]>([])
   const [selectedHeader, setSelectedHeader] = useState<Header | null>(null)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showError, setShowError] = useState(false)
 
   const handleExperienceSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    console.log('Experience submitted')
 
-    // Check if experienceDate matches the format 'YYYY-MM-DD'
+    if (!experienceTitle || !experienceDate || !experienceContent) {
+      setErrorMessage('All fields are required')
+      return
+    }
+
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/
     if (!dateRegex.test(experienceDate)) {
-      // Needs to be replaced with a banner message
-      // Also need to make the form input display an error message
-      console.log('Invalid date format')
+      setErrorMessage('Invalid date format')
       return
     }
 
@@ -70,18 +70,22 @@ export default function AdminActions() {
 
     await addExperience(requestBody)
       .then((response) => {
-        console.log('Response:', response)
+        setSuccessMessage('Experience added successfully')
+        clearAddExperienceForm()
       })
       .catch((error) => {
-        console.log('Error:', error)
+        setErrorMessage('Error adding experience')
+        console.error('Error:', error)
       })
-
-    console.log('Request body:', requestBody)
   }
 
   const handleSectionSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    console.log('Section submitted') // Needs to be replaced with a banner message
+
+    if (!sectionTitle || !sectionHeader) {
+      setErrorMessage('Title and Header are required')
+      return
+    }
 
     let requestBody = {
       title: sectionTitle,
@@ -99,18 +103,25 @@ export default function AdminActions() {
 
     await addSection(requestBody)
       .then((response) => {
-        console.log('Response:', response)
+        setSuccessMessage('Section added successfully')
+        clearAddSectionForm()
+        getHeaders().then((response) => {
+          setHeaders(response)
+        })
       })
       .catch((error) => {
-        console.log('Error:', error)
+        setErrorMessage('Error adding section')
+        console.error('Error:', error)
       })
-
-    console.log('Request body:', requestBody)
   }
 
   const handleEditingSectionSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    console.log('Editing section submitted') // Needs to be replaced with a banner message
+
+    if (!editingSectionTitle || !editingSectionHeader) {
+      setErrorMessage('Title and Header are required')
+      return
+    }
 
     let requestBody = {
       title: editingSectionTitle,
@@ -133,10 +144,34 @@ export default function AdminActions() {
     requestBody.contents = newEditingContents
     await updateSection(editingSectionId, requestBody)
       .then((response) => {
-        console.log('Response:', response)
+        setSuccessMessage('Section updated successfully')
+        clearrEditingSection()
+        getHeaders().then((response) => {
+          setHeaders(response)
+        })
       })
       .catch((error) => {
-        console.log('Error:', error)
+        setErrorMessage('Error updating section')
+        console.error('Error:', error)
+      })
+  }
+
+  const handleDelete = async () => {
+    if (!editingSectionId) {
+      setErrorMessage('Section must be selected to delete')
+      return
+    }
+    await deleteSection(editingSectionId)
+      .then((response) => {
+        setSuccessMessage('Section deleted successfully')
+        clearrEditingSection()
+        getHeaders().then((response) => {
+          setHeaders(response)
+        })
+      })
+      .catch((error) => {
+        setErrorMessage('Error deleting section')
+        console.error('Error:', error)
       })
   }
 
@@ -155,15 +190,32 @@ export default function AdminActions() {
     setSelectedHeader(header)
   }
 
-  const handleDelete = async () => {
-    console.log('Editing section id being deleted:', editingSectionId)
-    await deleteSection(editingSectionId)
-      .then((response) => {
-        console.log('Response:', response)
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
+  const clearrEditingSection = () => {
+    setEditingSectionId('')
+    setEditingSectionTitle('')
+    setEditingSectionOrder('')
+    setEditingSectionHeader('')
+    setEditingSectionSubHeader('')
+    setEditingSectionContent1('')
+    setEditingSectionContent2('')
+    setEditingSectionContent3('')
+    setEditingContents([])
+  }
+
+  const clearAddSectionForm = () => {
+    setSectionTitle('')
+    setSectionOrder('')
+    setSectionHeader('')
+    setSectionSubHeader('')
+    setSectionContent1('')
+    setSectionContent2('')
+    setSectionContent3('')
+  }
+
+  const clearAddExperienceForm = () => {
+    setExperienceTitle('')
+    setExperienceDate('')
+    setExperienceContent('')
   }
 
   useEffect(() => {
@@ -172,10 +224,39 @@ export default function AdminActions() {
     })
   }, [])
 
+  useEffect(() => {
+    if (successMessage) {
+      setShowSuccess(true)
+      const timer = setTimeout(() => {
+        setSuccessMessage('')
+        setShowSuccess(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage])
+
+  useEffect(() => {
+    if (errorMessage) {
+      setShowError(true)
+      const timer = setTimeout(() => {
+        setErrorMessage('')
+        setShowError(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [errorMessage])
+
   return (
     <SimpleLayout title="" intro="">
       <div className="md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
         <div className="space-y-10 divide-y divide-gray-900/10">
+          <div className="fixed bottom-8 right-8">
+            {showSuccess && <SuccessNotification message={successMessage} />}
+          </div>
+          <div className="fixed bottom-8 right-8">
+            {showError && <ErrorNotification message={errorMessage} />}
+          </div>
+
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
             <div className="px-4 sm:px-0">
               <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
