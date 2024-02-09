@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
+    ],
+    "no-inline-styles": "off",
+    "axe/aria": [
+      "default",
+      {
+        "aria-required-children": "off"
+      }
+    ]
+  }
+}
