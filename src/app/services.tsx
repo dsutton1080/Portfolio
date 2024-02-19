@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const url = 'https://api-portfolio-ulch.onrender.com'
+// const url = 'http://localhost:8080'
 
 const getAllSections = async () => {
   return axios
@@ -65,6 +66,21 @@ const addExperience = async (experience: any) => {
     .catch((error) => console.error(error))
 }
 
+const login = async (user: any) => {
+  const { email, password } = user
+  return axios
+    .post(url + '/user/login', { email, password })
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const signup = async (user: any) => {
+  return axios
+    .post(url + '/user/signup', user)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
 export {
   getAllSections,
   getSectionById,
@@ -75,4 +91,6 @@ export {
   getHeaders,
   getExperiences,
   addExperience,
+  login,
+  signup,
 }

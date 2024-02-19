@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useEffect, useRef } from 'react'
+import { createContext, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { ThemeProvider, useTheme } from 'next-themes'
 
@@ -38,6 +38,27 @@ function ThemeWatcher() {
   return null
 }
 
+type UserContextType = {
+  user: any
+  setUser: React.Dispatch<React.SetStateAction<any>>
+}
+export const UserContext = createContext<UserContextType>({
+  user: null,
+  setUser: () => {},
+})
+export default function UserProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const [user, setUser] = useState(null)
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  )
+}
+
 export const AppContext = createContext<{ previousPathname?: string }>({})
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -48,7 +69,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{ previousPathname }}>
       <ThemeProvider attribute="class" disableTransitionOnChange>
         <ThemeWatcher />
-        {children}
+        <UserProvider>{children}</UserProvider>
       </ThemeProvider>
     </AppContext.Provider>
   )
