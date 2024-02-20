@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const url = 'https://api-portfolio-ulch.onrender.com'
+// const url = 'http://localhost:8080'
 
 const getAllSections = async () => {
   return axios
@@ -37,6 +38,41 @@ const deleteSection = async (sectionId: any) => {
     .catch((error) => console.error(error))
 }
 
+const getProjects = async () => {
+  return axios
+    .get(url + '/project/all')
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const getProjectById = async (projectId: any) => {
+  return axios
+    .get(url + `/project/${projectId}`)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const addProject = async (project: any) => {
+  return axios
+    .post(url + '/project', project)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const updateProject = async (projectId: any, project: any) => {
+  return axios
+    .patch(url + `/project/${projectId}`, project)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const deleteProject = async (projectId: any) => {
+  return axios
+    .delete(url + `/project/${projectId}`)
+    .then((response) => response)
+    .catch((error) => console.error(error))
+}
+
 const getSectionCount = async () => {
   return axios
     .get(url + '/section/count')
@@ -65,14 +101,36 @@ const addExperience = async (experience: any) => {
     .catch((error) => console.error(error))
 }
 
+const login = async (user: any) => {
+  const { email, password } = user
+  return axios
+    .post(url + '/user/login', { email, password })
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const signup = async (user: any) => {
+  return axios
+    .post(url + '/user/signup', user)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
 export {
   getAllSections,
   getSectionById,
   addSection,
   updateSection,
   deleteSection,
+  getProjects,
+  getProjectById,
+  addProject,
+  updateProject,
+  deleteProject,
   getSectionCount,
   getHeaders,
   getExperiences,
   addExperience,
+  login,
+  signup,
 }

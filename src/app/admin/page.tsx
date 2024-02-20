@@ -9,6 +9,7 @@ import {
   deleteSection,
   getHeaders,
   getSectionById,
+  addProject,
 } from '../services'
 import { Header, Content } from '@/lib/resume'
 import { Fragment } from 'react'
@@ -41,6 +42,14 @@ export default function AdminActions() {
   const [editingSectionContent1, setEditingSectionContent1] = useState('')
   const [editingSectionContent2, setEditingSectionContent2] = useState('')
   const [editingSectionContent3, setEditingSectionContent3] = useState('')
+
+  const [projectName, setProjectName] = useState('')
+  const [projectDescription, setProjectDescription] = useState('')
+  const [projectLink, setProjectLink] = useState('')
+  const [projectLabel, setProjectLabel] = useState('')
+  const [projectOrder, setProjectOrder] = useState('')
+  const [projectLogo, setProjectLogo] = useState('')
+
   const [headers, setHeaders] = useState<Header[]>([])
   const [selectedHeader, setSelectedHeader] = useState<Header | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
@@ -111,6 +120,34 @@ export default function AdminActions() {
       })
       .catch((error) => {
         setErrorMessage('Error adding section')
+        console.error('Error:', error)
+      })
+  }
+
+  const handleProjectSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+
+    if (!projectName || !projectDescription || !projectLink || !projectLabel) {
+      setErrorMessage('All fields are required')
+      return
+    }
+
+    let requestBody = {
+      name: projectName,
+      description: projectDescription,
+      link: projectLink,
+      label: projectLabel,
+      order: parseInt(projectOrder),
+      logo: projectLogo,
+    }
+
+    await addProject(requestBody)
+      .then((response) => {
+        setSuccessMessage('Project added successfully')
+        clearAddProjectForm()
+      })
+      .catch((error) => {
+        setErrorMessage('Error adding project')
         console.error('Error:', error)
       })
   }
@@ -216,6 +253,15 @@ export default function AdminActions() {
     setExperienceTitle('')
     setExperienceDate('')
     setExperienceContent('')
+  }
+
+  const clearAddProjectForm = () => {
+    setProjectName('')
+    setProjectDescription('')
+    setProjectLink('')
+    setProjectLabel('')
+    setProjectOrder('')
+    setProjectLogo('')
   }
 
   useEffect(() => {
@@ -766,6 +812,139 @@ export default function AdminActions() {
                   className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Update
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+            <div className="px-4 sm:px-0">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                Add Project
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                This is a form to add a new project.
+              </p>
+            </div>
+
+            <form
+              onSubmit={handleProjectSubmit}
+              className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 dark:bg-gray-800 dark:ring-gray-700"
+            >
+              <div className="px-4 py-6 sm:p-8">
+                <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="projectName"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                    >
+                      Project Name
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                        <input
+                          type="text"
+                          name="projectName"
+                          id="projectName"
+                          autoComplete="off"
+                          value={projectName}
+                          onChange={(e) => setProjectName(e.target.value)}
+                          className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="projectDescription"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                    >
+                      Project Description
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                      <input
+                        type="text"
+                        name="projectDescription"
+                        id="projectDescription"
+                        autoComplete="off"
+                        value={projectDescription}
+                        onChange={(e) => setProjectDescription(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="projectLink"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    >
+                      Project Link
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <input
+                        type="text"
+                        name="projectLink"
+                        id="projectLink"
+                        value={projectLink}
+                        onChange={(e) => setProjectLink(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="projectLabel"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    >
+                      Project Label
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <input
+                        type="text"
+                        name="projectLabel"
+                        id="projectLabel"
+                        value={projectLabel}
+                        onChange={(e) => setProjectLabel(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="projectLogo"
+                      className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    >
+                      Project Logo
+                    </label>
+                    <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                      <input
+                        type="text"
+                        name="projectLogo"
+                        id="projectLogo"
+                        value={projectLogo}
+                        onChange={(e) => setProjectLogo(e.target.value)}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+                <button
+                  type="button"
+                  className="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Add
                 </button>
               </div>
             </form>
