@@ -38,6 +38,41 @@ const deleteSection = async (sectionId: any) => {
     .catch((error) => console.error(error))
 }
 
+const getProjects = async () => {
+  return axios
+    .get(url + '/project/all')
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const getProjectById = async (projectId: any) => {
+  return axios
+    .get(url + `/project/${projectId}`)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const addProject = async (project: any) => {
+  return axios
+    .post(url + '/project', project)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const updateProject = async (projectId: any, project: any) => {
+  return axios
+    .patch(url + `/project/${projectId}`, project)
+    .then((response) => response.data)
+    .catch((error) => console.error(error))
+}
+
+const deleteProject = async (projectId: any) => {
+  return axios
+    .delete(url + `/project/${projectId}`)
+    .then((response) => response)
+    .catch((error) => console.error(error))
+}
+
 const getSectionCount = async () => {
   return axios
     .get(url + '/section/count')
@@ -87,6 +122,11 @@ export {
   addSection,
   updateSection,
   deleteSection,
+  getProjects,
+  getProjectById,
+  addProject,
+  updateProject,
+  deleteProject,
   getSectionCount,
   getHeaders,
   getExperiences,

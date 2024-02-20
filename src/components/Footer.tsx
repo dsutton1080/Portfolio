@@ -34,7 +34,7 @@ export function Footer() {
                 <NavLink href="/">Home</NavLink>
                 <NavLink href="/resume">Resume</NavLink>
                 <NavLink href="/experience">Experience</NavLink>
-                {/* <NavLink href="/projects">Projects</NavLink> */}
+                <NavLink href="/projects">Projects</NavLink>
                 <div hidden={user === null || !user?.isAdmin}>
                   <NavLink href="/admin">Admin</NavLink>
                 </div>
