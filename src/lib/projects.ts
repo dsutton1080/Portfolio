@@ -1,12 +1,12 @@
 import { getProjects } from '@/app/services'
 
 export interface Project {
-  title: string
-  content: string
-  repoLink: string
-  repoLabel: string
+  name: string
+  description: string
+  link: string
+  label: string
   order?: number
-  imageUrl?: string
+  logo?: string
 }
 
 export async function getAllProjects(): Promise<Project[]> {
