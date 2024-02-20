@@ -43,12 +43,12 @@ export default function AdminActions() {
   const [editingSectionContent2, setEditingSectionContent2] = useState('')
   const [editingSectionContent3, setEditingSectionContent3] = useState('')
 
-  const [projectName, setProjectName] = useState('')
-  const [projectDescription, setProjectDescription] = useState('')
+  const [projectTitle, setProjectTitle] = useState('')
+  const [projectContent, setProjectContent] = useState('')
   const [projectLink, setProjectLink] = useState('')
   const [projectLabel, setProjectLabel] = useState('')
   const [projectOrder, setProjectOrder] = useState('')
-  const [projectLogo, setProjectLogo] = useState('')
+  const [projectImageUrl, setProjectImageUrl] = useState('')
 
   const [headers, setHeaders] = useState<Header[]>([])
   const [selectedHeader, setSelectedHeader] = useState<Header | null>(null)
@@ -127,18 +127,18 @@ export default function AdminActions() {
   const handleProjectSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
-    if (!projectName || !projectDescription || !projectLink || !projectLabel) {
+    if (!projectTitle || !projectContent || !projectLink || !projectLabel) {
       setErrorMessage('All fields are required')
       return
     }
 
     let requestBody = {
-      name: projectName,
-      description: projectDescription,
-      link: projectLink,
-      label: projectLabel,
+      title: projectTitle,
+      content: projectContent,
+      repoLink: projectLink,
+      repoLabel: projectLabel,
       order: parseInt(projectOrder),
-      logo: projectLogo,
+      imageUrl: projectImageUrl,
     }
 
     await addProject(requestBody)
@@ -256,12 +256,12 @@ export default function AdminActions() {
   }
 
   const clearAddProjectForm = () => {
-    setProjectName('')
-    setProjectDescription('')
+    setProjectTitle('')
+    setProjectContent('')
     setProjectLink('')
     setProjectLabel('')
     setProjectOrder('')
-    setProjectLogo('')
+    setProjectImageUrl('')
   }
 
   useEffect(() => {
@@ -835,7 +835,7 @@ export default function AdminActions() {
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="col-span-full">
                     <label
-                      htmlFor="projectName"
+                      htmlFor="projectTitle"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                     >
                       Project Name
@@ -844,11 +844,11 @@ export default function AdminActions() {
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
                           type="text"
-                          name="projectName"
-                          id="projectName"
+                          name="projectTitle"
+                          id="projectTitle"
                           autoComplete="off"
-                          value={projectName}
-                          onChange={(e) => setProjectName(e.target.value)}
+                          value={projectTitle}
+                          onChange={(e) => setProjectTitle(e.target.value)}
                           className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                         />
                       </div>
@@ -857,7 +857,7 @@ export default function AdminActions() {
 
                   <div className="col-span-full">
                     <label
-                      htmlFor="projectDescription"
+                      htmlFor="projectContent"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                     >
                       Project Description
@@ -865,11 +865,11 @@ export default function AdminActions() {
                     <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                       <input
                         type="text"
-                        name="projectDescription"
-                        id="projectDescription"
+                        name="projectContent"
+                        id="projectContent"
                         autoComplete="off"
-                        value={projectDescription}
-                        onChange={(e) => setProjectDescription(e.target.value)}
+                        value={projectContent}
+                        onChange={(e) => setProjectContent(e.target.value)}
                         className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
@@ -915,7 +915,7 @@ export default function AdminActions() {
 
                   <div className="col-span-full">
                     <label
-                      htmlFor="projectLogo"
+                      htmlFor="projectImageUrl"
                       className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                     >
                       Project Logo
@@ -923,10 +923,10 @@ export default function AdminActions() {
                     <div className="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                       <input
                         type="text"
-                        name="projectLogo"
-                        id="projectLogo"
-                        value={projectLogo}
-                        onChange={(e) => setProjectLogo(e.target.value)}
+                        name="projectImageUrl"
+                        id="projectImageUrl"
+                        value={projectImageUrl}
+                        onChange={(e) => setProjectImageUrl(e.target.value)}
                         className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white"
                       />
                     </div>
