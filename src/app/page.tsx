@@ -158,8 +158,8 @@ function Resume() {
 }
 
 export default async function Home() {
-  let experiences = (await getAllExperiences()).slice(0, 4)
-
+  let experiences = (await getAllExperiences()) || []
+  experiences = experiences.slice(0, 4)
   return (
     <>
       <Container className="mt-9">
