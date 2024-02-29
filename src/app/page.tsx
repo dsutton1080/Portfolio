@@ -108,7 +108,7 @@ function Resume() {
   let resume: Array<Role> = [
     {
       company: 'AT&T',
-      title: 'Sr Specialist TDP Engineer',
+      title: 'Software Engineer II',
       logo: attLogo,
       start: '2021',
       end: {
