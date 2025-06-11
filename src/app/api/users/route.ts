@@ -134,8 +134,8 @@ export async function DELETE(request: Request) {
       select: {
         id: true,
         email: true,
-        name: true,
-        role: true,
+        firstName: true,
+        isAdmin: true,
       },
     })
     return NextResponse.json(user)

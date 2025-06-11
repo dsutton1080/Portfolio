@@ -23,10 +23,6 @@ import {
   createContent,
   updateContent,
   deleteContent,
-  getSkills,
-  createSkill,
-  updateSkill,
-  deleteSkill,
   getSectionById
 } from '../services'
 import { Header, Content } from '@/lib/resume'

@@ -133,6 +133,10 @@ export async function PATCH(
       },
     })
 
+    if (!updatedSection) {
+      return NextResponse.json({ error: 'Section not found' }, { status: 404 })
+    }
+
     // Transform the data to match the expected format
     const transformedSection = {
       ...updatedSection,
