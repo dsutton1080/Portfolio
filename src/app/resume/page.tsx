@@ -2,7 +2,11 @@ import { type Metadata } from 'next'
 
 import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
-import { Section, getResume } from '@/lib/resume'
+import { type Section, getResume } from '@/lib/resume'
+
+// Add dynamic rendering configuration
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 function Section({ section }: { section: Section }) {
   return (

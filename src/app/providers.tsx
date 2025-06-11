@@ -3,6 +3,7 @@
 import { createContext, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { ThemeProvider, useTheme } from 'next-themes'
+import { getCurrentUser, loginUser, logoutUser } from '@/lib/auth'
 
 function usePrevious<T>(value: T) {
   let ref = useRef<T>()
@@ -51,7 +52,20 @@ export default function UserProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [user, setUser] = useState(null)
+  const [user, setUserState] = useState(null)
+
+  // On mount, initialize user from localStorage
+  useEffect(() => {
+    setUserState(getCurrentUser())
+  }, [])
+
+  // When user changes, update localStorage
+  const setUser = (user: any) => {
+    setUserState(user)
+    if (user) loginUser(user)
+    else logoutUser()
+  }
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

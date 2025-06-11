@@ -9,6 +9,10 @@ import expressScriptsLogo from '@/images/logos/expressScriptsLogo.png'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
 import { formatDate } from '@/lib/formatDate'
 
+// Add dynamic rendering configuration
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
     <svg
@@ -168,7 +172,7 @@ export default async function Home() {
             Full Stack Software Developer
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I’m DeRon, a full stack software developer based in St. Louis. I
+            I&apos;m DeRon, a full stack software developer based in St. Louis. I
             specialize in building high-quality websites and applications with a
             focus on performance, accessibility, and user experience.
           </p>

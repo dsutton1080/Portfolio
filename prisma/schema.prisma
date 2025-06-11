@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  firstName String?
+  isAdmin   Boolean @default(true)
+  lastName  String?
+  password  String  @default("")
+}
+
+model Section {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  order     Int?
+  title     String    @default("New Section")
+  header    String?
+  subHeader String?
+  contents  Content[]
+}
+
+model Content {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  content    String
+  order      Int?
+  section    Section @relation(fields: [section_id], references: [id], onDelete: Cascade)
+  section_id String  @db.ObjectId
+}
+
+model Experience {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String @default("New Experience")
+  content String @default("")
+  date    String @default("")
+}
+
+model Project {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String  @default("New Project")
+  description String  @default("")
+  link        String  @default("")
+  label       String  @default("")
+  order       Int?
+  logo        String?
+}
+
+model Skills {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @default("New Skill")
+  order Int?
+}

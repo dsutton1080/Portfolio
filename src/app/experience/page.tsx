@@ -4,6 +4,10 @@ import { SimpleLayout } from '@/components/SimpleLayout'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
 import { formatDate } from '@/lib/formatDate'
 
+// Add dynamic rendering configuration
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function Experience({ experience }: { experience: Experience }) {
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">

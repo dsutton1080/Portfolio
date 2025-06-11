@@ -4,6 +4,7 @@ import { UserContext } from '../providers'
 import { login } from '../services'
 import { SuccessNotification, ErrorNotification } from '@/components/Alerts'
 import { useRouter } from 'next/navigation'
+import { loginUser } from '@/lib/auth'
 
 export default function Login() {
   const { user, setUser } = useContext(UserContext)
@@ -19,6 +20,7 @@ export default function Login() {
     if (email && password) {
       await login({ email, password }).then((response) => {
         if (response) {
+          loginUser(response)
           setUser(response)
           setSuccessMessage('Logged In Successfully')
           setTimeout(() => {

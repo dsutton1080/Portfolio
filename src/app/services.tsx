@@ -1,136 +1,359 @@
 import axios from 'axios'
 
-const url = 'https://api-portfolio-ulch.onrender.com'
-// const url = 'http://localhost:8080'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
-const getAllSections = async () => {
-  return axios
-    .get(url + '/section/all')
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+// Section services
+export const getSections = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch sections')
+  }
+  return response.json()
 }
 
-const getSectionById = async (sectionId: any) => {
-  return axios
-    .get(url + `/section/${sectionId}`)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const getSectionById = async (sectionId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch section')
+  }
+  return response.json()
 }
 
-const addSection = async (section: any) => {
-  return axios
-    .post(url + '/section', section)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const getSectionCount = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?path=count`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch section count')
+  }
+  return response.json()
 }
 
-const updateSection = async (sectionId: any, section: any) => {
-  return axios
-    .patch(url + `/section/${sectionId}`, section)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const getSectionHeaders = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?path=headers`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch section headers')
+  }
+  return response.json()
 }
 
-const deleteSection = async (sectionId: any) => {
-  return axios
-    .delete(url + `/section/${sectionId}`)
-    .then((response) => response)
-    .catch((error) => console.error(error))
+export const createSection = async (section: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/sections`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(section),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create section')
+  }
+  return response.json()
 }
 
-const getProjects = async () => {
-  return axios
-    .get(url + '/project/all')
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const updateSection = async (sectionId: string, section: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(section),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update section')
+  }
+  return response.json()
 }
 
-const getProjectById = async (projectId: any) => {
-  return axios
-    .get(url + `/project/${projectId}`)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const deleteSection = async (sectionId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete section')
+  }
+  return response.json()
 }
 
-const addProject = async (project: any) => {
-  return axios
-    .post(url + '/project', project)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+// Project services
+export const getProjects = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/projects?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch projects')
+  }
+  return response.json()
 }
 
-const updateProject = async (projectId: any, project: any) => {
-  return axios
-    .patch(url + `/project/${projectId}`, project)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const getProjectById = async (projectId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch project')
+  }
+  return response.json()
 }
 
-const deleteProject = async (projectId: any) => {
-  return axios
-    .delete(url + `/project/${projectId}`)
-    .then((response) => response)
-    .catch((error) => console.error(error))
+export const createProject = async (project: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/projects`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create project')
+  }
+  return response.json()
 }
 
-const getSectionCount = async () => {
-  return axios
-    .get(url + '/section/count')
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const updateProject = async (projectId: string, project: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update project')
+  }
+  return response.json()
 }
 
-const getHeaders = async () => {
-  return axios
-    .get(url + '/section/headers')
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const deleteProject = async (projectId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete project')
+  }
+  return response.json()
 }
 
-const getExperiences = async () => {
-  return axios
-    .get(url + '/experience/all')
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+// Experience services
+export const getExperiences = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/experiences?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch experiences')
+  }
+  return response.json()
 }
 
-const addExperience = async (experience: any) => {
-  return axios
-    .post(url + '/experience', experience)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const getExperienceById = async (experienceId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch experience')
+  }
+  return response.json()
 }
 
-const login = async (user: any) => {
-  const { email, password } = user
-  return axios
-    .post(url + '/user/login', { email, password })
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const createExperience = async (experience: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/experiences`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(experience),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create experience')
+  }
+  return response.json()
 }
 
-const signup = async (user: any) => {
-  return axios
-    .post(url + '/user/signup', user)
-    .then((response) => response.data)
-    .catch((error) => console.error(error))
+export const updateExperience = async (experienceId: string, experience: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(experience),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update experience')
+  }
+  return response.json()
 }
 
-export {
-  getAllSections,
-  getSectionById,
-  addSection,
-  updateSection,
-  deleteSection,
-  getProjects,
-  getProjectById,
-  addProject,
-  updateProject,
-  deleteProject,
-  getSectionCount,
-  getHeaders,
-  getExperiences,
-  addExperience,
-  login,
-  signup,
+export const deleteExperience = async (experienceId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete experience')
+  }
+  return response.json()
+}
+
+// User services
+export const getUsers = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/users?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch users')
+  }
+  return response.json()
+}
+
+export const getUserById = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch user')
+  }
+  return response.json()
+}
+
+export const signup = async (user: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/users?path=signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to sign up')
+  }
+  return response.json()
+}
+
+export const login = async (credentials: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/users?path=login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to log in')
+  }
+  return response.json()
+}
+
+export const updateUser = async (userId: string, user: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update user')
+  }
+  return response.json()
+}
+
+export const changeUserRole = async (userId: string, role: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}&path=change-role`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(role),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to change user role')
+  }
+  return response.json()
+}
+
+// Content services
+export const getContents = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/content?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch contents')
+  }
+  return response.json()
+}
+
+export const getContentById = async (contentId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch content')
+  }
+  return response.json()
+}
+
+export const createContent = async (content: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/content`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(content),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create content')
+  }
+  return response.json()
+}
+
+export const updateContent = async (contentId: string, content: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(content),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update content')
+  }
+  return response.json()
+}
+
+export const deleteContent = async (contentId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete content')
+  }
+  return response.json()
+}
+
+// Skills services
+export const getSkills = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/skills?path=all`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch skills')
+  }
+  return response.json()
+}
+
+export const createSkill = async (skill: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/skills`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(skill),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create skill')
+  }
+  return response.json()
+}
+
+export const updateSkill = async (skillId: string, skill: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/skills?id=${skillId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(skill),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update skill')
+  }
+  return response.json()
+}
+
+export const deleteSkill = async (skillId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/skills?id=${skillId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete skill')
+  }
+  return response.json()
 }
