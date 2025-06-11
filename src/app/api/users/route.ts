@@ -73,9 +73,11 @@ export async function POST(request: Request) {
   if (path === 'login') {
     try {
       const loginInfo = await request.json()
+      console.log(loginInfo)
       const user = await prisma.user.findUnique({
         where: { email: loginInfo.email },
       })
+      console.log(user)
 
       if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
