@@ -1,10 +1,8 @@
 import axios from 'axios'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-
 // Section services
 export const getSections = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?path=all`)
+  const response = await fetch(`/api/sections?path=all`)
   if (!response.ok) {
     throw new Error('Failed to fetch sections')
   }
@@ -12,7 +10,7 @@ export const getSections = async () => {
 }
 
 export const getSectionById = async (sectionId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`)
+  const response = await fetch(`/api/sections?id=${sectionId}`)
   if (!response.ok) {
     throw new Error('Failed to fetch section')
   }
@@ -20,7 +18,7 @@ export const getSectionById = async (sectionId: string) => {
 }
 
 export const getSectionCount = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?path=count`)
+  const response = await fetch(`/api/sections?path=count`)
   if (!response.ok) {
     throw new Error('Failed to fetch section count')
   }
@@ -28,7 +26,7 @@ export const getSectionCount = async () => {
 }
 
 export const getSectionHeaders = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?path=headers`)
+  const response = await fetch(`/api/sections?path=headers`)
   if (!response.ok) {
     throw new Error('Failed to fetch section headers')
   }
@@ -36,7 +34,7 @@ export const getSectionHeaders = async () => {
 }
 
 export const createSection = async (section: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/sections`, {
+  const response = await fetch(`/api/sections`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,7 +48,7 @@ export const createSection = async (section: any) => {
 }
 
 export const updateSection = async (sectionId: string, section: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`, {
+  const response = await fetch(`/api/sections?id=${sectionId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +62,7 @@ export const updateSection = async (sectionId: string, section: any) => {
 }
 
 export const deleteSection = async (sectionId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/sections?id=${sectionId}`, {
+  const response = await fetch(`/api/sections?id=${sectionId}`, {
     method: 'DELETE',
   })
   if (!response.ok) {
@@ -75,7 +73,7 @@ export const deleteSection = async (sectionId: string) => {
 
 // Project services
 export const getProjects = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/projects?path=all`)
+  const response = await fetch(`/api/projects?path=all`)
   if (!response.ok) {
     throw new Error('Failed to fetch projects')
   }
@@ -83,7 +81,7 @@ export const getProjects = async () => {
 }
 
 export const getProjectById = async (projectId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`)
+  const response = await fetch(`/api/projects?id=${projectId}`)
   if (!response.ok) {
     throw new Error('Failed to fetch project')
   }
@@ -91,7 +89,7 @@ export const getProjectById = async (projectId: string) => {
 }
 
 export const createProject = async (project: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/projects`, {
+  const response = await fetch(`/api/projects`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -105,7 +103,7 @@ export const createProject = async (project: any) => {
 }
 
 export const updateProject = async (projectId: string, project: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`, {
+  const response = await fetch(`/api/projects?id=${projectId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -119,7 +117,7 @@ export const updateProject = async (projectId: string, project: any) => {
 }
 
 export const deleteProject = async (projectId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/projects?id=${projectId}`, {
+  const response = await fetch(`/api/projects?id=${projectId}`, {
     method: 'DELETE',
   })
   if (!response.ok) {
@@ -130,7 +128,7 @@ export const deleteProject = async (projectId: string) => {
 
 // Experience services
 export const getExperiences = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/experiences?path=all`)
+  const response = await fetch(`/api/experiences?path=all`)
   if (!response.ok) {
     throw new Error('Failed to fetch experiences')
   }
@@ -138,7 +136,7 @@ export const getExperiences = async () => {
 }
 
 export const getExperienceById = async (experienceId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`)
+  const response = await fetch(`/api/experiences?id=${experienceId}`)
   if (!response.ok) {
     throw new Error('Failed to fetch experience')
   }
@@ -146,7 +144,7 @@ export const getExperienceById = async (experienceId: string) => {
 }
 
 export const createExperience = async (experience: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/experiences`, {
+  const response = await fetch(`/api/experiences`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -160,7 +158,7 @@ export const createExperience = async (experience: any) => {
 }
 
 export const updateExperience = async (experienceId: string, experience: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`, {
+  const response = await fetch(`/api/experiences?id=${experienceId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -174,7 +172,7 @@ export const updateExperience = async (experienceId: string, experience: any) =>
 }
 
 export const deleteExperience = async (experienceId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/experiences?id=${experienceId}`, {
+  const response = await fetch(`/api/experiences?id=${experienceId}`, {
     method: 'DELETE',
   })
   if (!response.ok) {
@@ -185,7 +183,7 @@ export const deleteExperience = async (experienceId: string) => {
 
 // User services
 export const getUsers = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/users?path=all`)
+  const response = await fetch(`/api/users?path=all`)
   if (!response.ok) {
     throw new Error('Failed to fetch users')
   }
@@ -193,7 +191,7 @@ export const getUsers = async () => {
 }
 
 export const getUserById = async (userId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}`)
+  const response = await fetch(`/api/users?id=${userId}`)
   if (!response.ok) {
     throw new Error('Failed to fetch user')
   }
@@ -201,7 +199,7 @@ export const getUserById = async (userId: string) => {
 }
 
 export const signup = async (user: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/users?path=signup`, {
+  const response = await fetch(`/api/users?path=signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -215,7 +213,7 @@ export const signup = async (user: any) => {
 }
 
 export const login = async (credentials: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/users?path=login`, {
+  const response = await fetch(`/api/users?path=login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -229,7 +227,7 @@ export const login = async (credentials: any) => {
 }
 
 export const updateUser = async (userId: string, user: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}`, {
+  const response = await fetch(`/api/users?id=${userId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -243,7 +241,7 @@ export const updateUser = async (userId: string, user: any) => {
 }
 
 export const changeUserRole = async (userId: string, role: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/users?id=${userId}&path=change-role`, {
+  const response = await fetch(`/api/users?id=${userId}&path=change-role`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -258,7 +256,7 @@ export const changeUserRole = async (userId: string, role: any) => {
 
 // Content services
 export const getContents = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/content?path=all`)
+  const response = await fetch(`/api/content?path=all`)
   if (!response.ok) {
     throw new Error('Failed to fetch contents')
   }
@@ -266,7 +264,7 @@ export const getContents = async () => {
 }
 
 export const getContentById = async (contentId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`)
+  const response = await fetch(`/api/content?id=${contentId}`)
   if (!response.ok) {
     throw new Error('Failed to fetch content')
   }
@@ -274,7 +272,7 @@ export const getContentById = async (contentId: string) => {
 }
 
 export const createContent = async (content: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/content`, {
+  const response = await fetch(`/api/content`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -288,7 +286,7 @@ export const createContent = async (content: any) => {
 }
 
 export const updateContent = async (contentId: string, content: any) => {
-  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`, {
+  const response = await fetch(`/api/content?id=${contentId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -302,7 +300,7 @@ export const updateContent = async (contentId: string, content: any) => {
 }
 
 export const deleteContent = async (contentId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/content?id=${contentId}`, {
+  const response = await fetch(`/api/content?id=${contentId}`, {
     method: 'DELETE',
   })
   if (!response.ok) {
