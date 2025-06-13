@@ -12,9 +12,17 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Add build arguments for TypeScript
+# Add build arguments for TypeScript and memory settings
 ARG NEXT_TELEMETRY_DISABLED=1
-ARG NODE_OPTIONS="--max-old-space-size=4096"
+ARG NODE_OPTIONS="--max-old-space-size=8192"
+ARG SWAP_SIZE=4G
+
+# Install and configure swap
+RUN apk add --no-cache util-linux && \
+    dd if=/dev/zero of=/swapfile bs=1M count=4096 && \
+    chmod 600 /swapfile && \
+    mkswap /swapfile && \
+    swapon /swapfile
 
 # Copy dependencies
 COPY --from=deps /app/node_modules ./node_modules
@@ -28,7 +36,11 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build the application with optimized settings
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN npm run build
+
+# Clean up swap
+RUN swapoff /swapfile && rm /swapfile
 
 # Production image, copy all the files and run next
 FROM node:20-alpine AS runner
