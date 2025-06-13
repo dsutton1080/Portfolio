@@ -10,9 +10,9 @@ const nextConfig = {
     // Only check types in production
     ignoreBuildErrors: true, // Temporarily disable type checking during build
   },
+  // Disable ESLint during build
   eslint: {
-    // Only check ESLint in production
-    ignoreDuringBuilds: true, // Temporarily disable ESLint during build
+    ignoreDuringBuilds: true,
   },
   // Optimize production builds
   swcMinify: true,
