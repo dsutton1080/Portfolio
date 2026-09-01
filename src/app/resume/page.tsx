@@ -13,7 +13,9 @@ function Section({ section }: { section: Section }) {
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">
         <Card.Title>{section.header}</Card.Title>
-        <Card.Subtitle>{section.subHeader}</Card.Subtitle>
+        {section.subHeader && (
+          <Card.Subtitle>{section.subHeader}</Card.Subtitle>
+        )}
         {section.contents.map((content, index) => (
           <Card.Description key={index}>{content.content}</Card.Description>
         ))}
