@@ -15,7 +15,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="transition hover:text-teal-500 dark:hover:text-teal-400"
+      className="transition hover:text-teal-700 dark:hover:text-teal-400"
     >
       {children}
     </Link>
@@ -42,7 +42,7 @@ export function Footer() {
                   <Link
                     href="/"
                     onClick={() => setUser(null)}
-                    className="border-0 border-transparent bg-transparent transition hover:text-teal-500 dark:hover:text-teal-400"
+                    className="border-0 border-transparent bg-transparent transition hover:text-teal-700 dark:hover:text-teal-400"
                   >
                     Logout
                   </Link>
@@ -51,7 +51,7 @@ export function Footer() {
                   <NavLink href="/login">Login</NavLink>
                 </div>
               </div>
-              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 &copy; {new Date().getFullYear()} DeRon Sutton. All rights
                 reserved.
               </p>
