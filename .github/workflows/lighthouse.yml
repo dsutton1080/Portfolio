@@ -1,0 +1,41 @@
+name: Lighthouse
+
+# Audits the DEPLOYED site, so this reports regressions after a deploy rather
+# than blocking them before merge.
+#
+# To gate pull requests instead, the job would need to build the app and serve
+# it locally - which needs a MongoDB instance, because the content pages are
+# `force-dynamic` and query the database on every request. That is a bigger
+# change; see the PR description.
+on:
+  workflow_dispatch: # run on demand from the Actions tab
+  schedule:
+    - cron: '0 13 * * 1' # Mondays, 13:00 UTC
+  push:
+    branches: [main]
+    # Only re-audit when something that can affect the rendered page changes.
+    paths:
+      - 'src/**'
+      - 'next.config.mjs'
+      - 'tailwind.config.ts'
+      - 'package.json'
+      - 'lighthouserc.js'
+      - '.github/workflows/lighthouse.yml'
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Give the deploy a moment to finish when this is triggered by a push.
+      - name: Wait for deploy
+        if: github.event_name == 'push'
+        run: sleep 60
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=./lighthouserc.js
