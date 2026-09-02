@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun --config=./lighthouserc.js"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
