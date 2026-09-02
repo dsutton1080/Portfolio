@@ -53,10 +53,10 @@ module.exports = {
         'heading-order': 'error',
         'bypass': 'error',
 
-        // ---- Accessibility: currently FAILING -> warn for now -----------
-        // color-contrast is fixed by PR #8 (5 WCAG AA failures). Flip it to
-        // 'error' once that lands - that ratchet is the point of this file.
-        'color-contrast': 'warn',
+        // Fixed by PR #8 and verified live (text-zinc-500 / text-teal-700 /
+        // dark: variants on the auth pages are all deployed), so this is now
+        // a hard error to keep it fixed.
+        'color-contrast': 'error',
 
         // Overall category score. Starts as a warning because the exact
         // number has not been observed on a CI runner yet; once you see it in
@@ -64,13 +64,24 @@ module.exports = {
         'categories:accessibility': ['warn', { minScore: 1 }],
 
         // ---- Resource budgets: deterministic, hard failures -------------
-        // Ceilings set just above today's measured over-the-wire numbers so
-        // the build is green on day one. Tighten as PRs land - see the table
-        // in the PR description for the target values.
-        'resource-summary:script:size': ['error', { maxNumericValue: 200000 }],
-        'resource-summary:stylesheet:size': ['error', { maxNumericValue: 25000 }],
-        'resource-summary:image:size': ['error', { maxNumericValue: 550000 }],
-        'resource-summary:total:size': ['error', { maxNumericValue: 800000 }],
+        // Ceilings set ~15-20% above the live over-the-wire numbers measured
+        // after PR #7 shipped, so there is room for normal change but not for
+        // another 380 KB regression.
+        //
+        //   measured live          budget
+        //   images    133,721 B -> 160,000
+        //   scripts   114,752 B -> 140,000
+        //   stylesheet  8,486 B ->  15,000
+        //   total     264,953 B -> 320,000
+        //
+        // The image number is still dominated by two auto-traced SVG logos
+        // (attLogo 108,544 B + graceLogo 21,873 B gzip). Replacing those with
+        // hand-authored vectors should let the image budget drop to ~20,000
+        // and the total to ~160,000.
+        'resource-summary:script:size': ['error', { maxNumericValue: 140000 }],
+        'resource-summary:stylesheet:size': ['error', { maxNumericValue: 15000 }],
+        'resource-summary:image:size': ['error', { maxNumericValue: 160000 }],
+        'resource-summary:total:size': ['error', { maxNumericValue: 320000 }],
 
         // ---- Timing: watch first, tighten later -------------------------
         'largest-contentful-paint': 'warn',
