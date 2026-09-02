@@ -57,7 +57,7 @@ export default async function ProjectGallery() {
               <Card.Description>{project.description}</Card.Description>
             </div>
             {project.label && (
-              <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
+              <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-500 transition group-hover:text-teal-700 dark:text-zinc-200 dark:group-hover:text-teal-400">
                 <LinkIcon className="h-6 w-6 flex-none" />
                 <span className="ml-2">{project.label}</span>
               </p>
