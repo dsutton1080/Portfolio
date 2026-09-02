@@ -14,22 +14,29 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const [showError, setShowError] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
-  const handleLogin = async () => {
-    if (email && password) {
-      await login({ email, password }).then((response) => {
-        if (response) {
-          loginUser(response)
-          setUser(response)
-          setSuccessMessage('Logged In Successfully')
-          setTimeout(() => {
-            router.push('/')
-          }, 1000)
-        } else {
-          setErrorMessage('Invalid Credentials')
-        }
-      })
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!email || !password) return
+
+    setIsSubmitting(true)
+    try {
+      const response = await login({ email, password })
+      loginUser(response)
+      setUser(response)
+      setSuccessMessage('Logged In Successfully')
+      setTimeout(() => {
+        router.push('/')
+      }, 1000)
+    } catch (error) {
+      // `login()` rejects on any non-2xx response. Without this catch the
+      // rejection was unhandled and a failed sign-in produced no feedback at all.
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Invalid Credentials',
+      )
+      setIsSubmitting(false)
     }
   }
 
@@ -70,7 +77,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label
                 htmlFor="email"
@@ -116,11 +123,11 @@ export default function Login() {
             </div>
             <div>
               <button
-                onClick={handleLogin}
-                type="button"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                type="submit"
+                disabled={isSubmitting}
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Sign in
+                {isSubmitting ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>

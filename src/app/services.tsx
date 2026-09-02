@@ -217,6 +217,20 @@ export const getUserById = async (userId: string) => {
   return response.json()
 }
 
+// The auth endpoints return a JSON body of the form `{ error: string }` on
+// failure (e.g. "User not found", "Invalid password"). Surface that instead of
+// collapsing every failure into one generic string, so callers can show the
+// user why the request actually failed.
+async function errorFromResponse(response: Response, fallback: string) {
+  try {
+    const body = await response.json()
+    if (body && typeof body.error === 'string') return new Error(body.error)
+  } catch {
+    // Body was not JSON; fall through to the generic message.
+  }
+  return new Error(fallback)
+}
+
 export const signup = async (user: any) => {
   const response = await fetch(createApiUrl(`/api/users?path=signup`), {
     method: 'POST',
@@ -226,7 +240,7 @@ export const signup = async (user: any) => {
     body: JSON.stringify(user),
   })
   if (!response.ok) {
-    throw new Error('Failed to sign up')
+    throw await errorFromResponse(response, 'Failed to sign up')
   }
   return response.json()
 }
@@ -240,7 +254,7 @@ export const login = async (credentials: any) => {
     body: JSON.stringify(credentials),
   })
   if (!response.ok) {
-    throw new Error('Failed to log in')
+    throw await errorFromResponse(response, 'Failed to log in')
   }
   return response.json()
 }
