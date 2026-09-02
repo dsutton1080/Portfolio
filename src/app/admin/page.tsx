@@ -42,7 +42,7 @@ interface SuccessNotificationProps {
 
 function SuccessNotification({ message, onClose }: SuccessNotificationProps) {
   return (
-    <div className="fixed bottom-8 right-8 rounded-md bg-green-50 p-4 dark:bg-green-900">
+    <div role="status" className="fixed bottom-8 right-8 rounded-md bg-green-50 p-4 dark:bg-green-900">
       <div className="flex">
         <div className="flex-shrink-0">
           <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
@@ -74,7 +74,7 @@ interface ErrorNotificationProps {
 
 function ErrorNotification({ message, onClose }: ErrorNotificationProps) {
   return (
-    <div className="fixed bottom-8 right-8 rounded-md bg-red-50 p-4 dark:bg-red-900">
+    <div role="alert" className="fixed bottom-8 right-8 rounded-md bg-red-50 p-4 dark:bg-red-900">
       <div className="flex">
         <div className="flex-shrink-0">
           <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />

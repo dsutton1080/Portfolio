@@ -1,8 +1,8 @@
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid'
 
 export function SuccessNotification({ message }: { message: string }) {
   return (
-    <div className="rounded-md bg-green-50 p-4">
+    <div role="status" className="rounded-md bg-green-50 p-4">
       <div className="flex">
         <div className="flex-shrink-0">
           <CheckCircleIcon
@@ -23,13 +23,10 @@ export function SuccessNotification({ message }: { message: string }) {
 
 export function ErrorNotification({ message }: { message: string }) {
   return (
-    <div className="rounded-md bg-red-50 p-4">
+    <div role="alert" className="rounded-md bg-red-50 p-4">
       <div className="flex">
         <div className="flex-shrink-0">
-          <CheckCircleIcon
-            className="h-5 w-5 text-red-400"
-            aria-hidden="true"
-          />
+          <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
         </div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-red-800">Error</h3>
