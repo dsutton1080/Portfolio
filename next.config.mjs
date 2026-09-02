@@ -5,15 +5,6 @@ import remarkGfm from 'remark-gfm'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
-  // Optimize build performance
-  typescript: {
-    // Only check types in production
-    ignoreBuildErrors: true, // Temporarily disable type checking during build
-  },
-  // Disable ESLint during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   // Optimize production builds
   swcMinify: true,
   poweredByHeader: false,
