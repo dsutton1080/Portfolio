@@ -36,7 +36,8 @@ function Experience({ experience }: { experience: Experience }) {
 
 export const metadata: Metadata = {
   title: 'Experience',
-  description: '',
+  description:
+    "Problems I've worked on - what the problem was, what I did about it, and what changed as a result.",
 }
 
 export default async function ExperienceList() {
@@ -45,7 +46,7 @@ export default async function ExperienceList() {
   return (
     <SimpleLayout
       title="Work Experience"
-      intro="A log of all my work experience and the things I learned while working through different tasks."
+      intro="Problems I've worked on - what the problem was, what I did about it, and what changed as a result."
     >
       <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
         <div className="flex max-w-3xl flex-col space-y-16">
