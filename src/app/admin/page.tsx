@@ -6,14 +6,11 @@ import {
   createSection,
   updateSection,
   deleteSection,
-  getSectionHeaders,
-  createProject,
-  updateProject,
-  deleteProject,
-  getProjects
+  getSectionHeaders
 } from '../services'
 import { Header } from '@/lib/resume'
 import { ExperienceManager } from '@/components/admin/ExperienceManager'
+import { ProjectManager } from '@/components/admin/ProjectManager'
 import { CheckCircleIcon, XMarkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 interface SuccessNotificationProps {
@@ -98,12 +95,6 @@ export default function AdminActions() {
   const [editingSectionContent2, setEditingSectionContent2] = useState('')
   const [editingSectionContent3, setEditingSectionContent3] = useState('')
 
-  const [projectName, setProjectName] = useState('')
-  const [projectDescription, setProjectDescription] = useState('')
-  const [projectLink, setProjectLink] = useState('')
-  const [projectLabel, setProjectLabel] = useState('')
-  const [projectOrder, setProjectOrder] = useState('')
-  const [projectLogo, setProjectLogo] = useState('')
 
   const [headers, setHeaders] = useState<Header[]>([])
   const [successMessage, setSuccessMessage] = useState('')
@@ -114,18 +105,9 @@ export default function AdminActions() {
   // Add new state variables for editing experiences
 
   // Add new state variables for editing projects
-  const [editingProjectId, setEditingProjectId] = useState('')
-  const [editingProjectName, setEditingProjectName] = useState('')
-  const [editingProjectDescription, setEditingProjectDescription] = useState('')
-  const [editingProjectLink, setEditingProjectLink] = useState('')
-  const [editingProjectLabel, setEditingProjectLabel] = useState('')
-  const [editingProjectOrder, setEditingProjectOrder] = useState('')
-  const [editingProjectLogo, setEditingProjectLogo] = useState('')
-  const [projects, setProjects] = useState<any[]>([])
 
   // Add mode state variables
 
-  const [showAddProjectForm, setShowAddProjectForm] = useState(false)
   const [showAddSectionForm, setShowAddSectionForm] = useState(false)
 
   const handleEditSection = (section: any) => {
@@ -184,34 +166,6 @@ export default function AdminActions() {
       })
   }
 
-  const handleProjectSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!projectName || !projectDescription || !projectLink || !projectLabel) {
-      setErrorMessage('All fields are required')
-      return
-    }
-
-    let requestBody = {
-      name: projectName,
-      description: projectDescription,
-      link: projectLink,
-      label: projectLabel,
-      order: parseInt(projectOrder),
-      logo: projectLogo,
-    }
-
-    await createProject(requestBody)
-      .then(() => {
-        setSuccessMessage('Project added successfully')
-        clearAddProjectForm()
-      })
-      .catch((error) => {
-        setErrorMessage('Error adding project')
-        console.error('Error:', error)
-      })
-  }
-
   const handleEditingSectionSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
@@ -265,76 +219,6 @@ export default function AdminActions() {
     setSectionContent3('')
   }
 
-  const clearAddProjectForm = () => {
-    setProjectName('')
-    setProjectDescription('')
-    setProjectLink('')
-    setProjectLabel('')
-    setProjectOrder('')
-    setProjectLogo('')
-  }
-
-  // Add new handlers for editing projects
-  const handleEditProject = (project: any) => {
-    setShowAddProjectForm(false)
-    clearAddProjectForm()
-    setEditingProjectId(project.id)
-    setEditingProjectName(project.name)
-    setEditingProjectDescription(project.description)
-    setEditingProjectLink(project.link)
-    setEditingProjectLabel(project.label)
-    setEditingProjectLogo(project.logo)
-  }
-
-  const handleEditingProjectSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!editingProjectName || !editingProjectDescription || !editingProjectLink || !editingProjectLabel) {
-      setErrorMessage('All fields are required')
-      return
-    }
-
-    let requestBody = {
-      name: editingProjectName,
-      description: editingProjectDescription,
-      link: editingProjectLink,
-      label: editingProjectLabel,
-      order: parseInt(editingProjectOrder) || 0,
-      logo: editingProjectLogo,
-    }
-
-    await updateProject(editingProjectId, requestBody)
-      .then(() => {
-        setSuccessMessage('Project updated successfully')
-        clearEditingProject()
-        fetchProjects()
-      })
-      .catch((error) => {
-        setErrorMessage('Error updating project')
-        console.error('Error:', error)
-      })
-  }
-
-  const clearEditingProject = () => {
-    setEditingProjectId('')
-    setEditingProjectName('')
-    setEditingProjectDescription('')
-    setEditingProjectLink('')
-    setEditingProjectLabel('')
-    setEditingProjectOrder('')
-    setEditingProjectLogo('')
-  }
-
-  // Add fetch functions
-  const fetchProjects = async () => {
-    try {
-      const response = await getProjects()
-      setProjects(response)
-    } catch (error) {
-      console.error('Error fetching projects:', error)
-    }
-  }
-
   const fetchHeaders = async () => {
     try {
       const headersData = await getSectionHeaders()
@@ -346,10 +230,6 @@ export default function AdminActions() {
   }
 
   // Add useEffect to fetch data
-  useEffect(() => {
-    fetchProjects()
-  }, [])
-
   useEffect(() => {
     getSectionHeaders().then((response) => {
       setHeaders(response)
@@ -378,19 +258,6 @@ export default function AdminActions() {
     }
   }, [errorMessage])
 
-  const handleDeleteProject = async (id: string) => {
-    try {
-      await deleteProject(id)
-      await fetchProjects()
-      clearEditingProject()
-      setShowSuccess(true)
-      setSuccessMessage('Project deleted successfully!')
-    } catch (error) {
-      setShowError(true)
-      setErrorMessage('Failed to delete project.')
-    }
-  }
-
   const handleDeleteSection = async (id: string) => {
     try {
       await deleteSection(id)
@@ -412,143 +279,8 @@ export default function AdminActions() {
           onError={setErrorMessage}
         />
 
-        <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
-          <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            Project Management
-          </h2>
-          <div className="mt-6">
-            <div>
-              <div className="flex items-center justify-end px-3">
-                <button
-                  onClick={() => {
-                    setShowAddProjectForm(true)
-                    clearAddProjectForm()
-                  }}
-                  className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                >
-                  Create
-                </button>
-              </div>
-              {projects.map((project, index) => (
-                <div 
-                  key={project.id} 
-                  className={`flex items-center justify-between px-3 ${
-                    index % 2 === 0 ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''
-                  }`}
-                >
-                  <span>{project.name}</span>
-                  <button
-                    onClick={() => handleEditProject(project)}
-                    aria-label={`Edit ${project.name}`}
-                    className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                  >
-                    Edit
-                  </button>
-                </div>
-              ))}
-            </div>
-            {(editingProjectId || showAddProjectForm) && (
-              <form onSubmit={showAddProjectForm ? handleProjectSubmit : handleEditingProjectSubmit} className="mt-6 space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={showAddProjectForm ? projectName : editingProjectName}
-                    onChange={(e) => showAddProjectForm ? setProjectName(e.target.value) : setEditingProjectName(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    value={showAddProjectForm ? projectDescription : editingProjectDescription}
-                    onChange={(e) => showAddProjectForm ? setProjectDescription(e.target.value) : setEditingProjectDescription(e.target.value)}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="link" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Link
-                  </label>
-                  <input
-                    type="text"
-                    id="link"
-                    value={showAddProjectForm ? projectLink : editingProjectLink}
-                    onChange={(e) => showAddProjectForm ? setProjectLink(e.target.value) : setEditingProjectLink(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="label" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Label
-                  </label>
-                  <input
-                    type="text"
-                    id="label"
-                    value={showAddProjectForm ? projectLabel : editingProjectLabel}
-                    onChange={(e) => showAddProjectForm ? setProjectLabel(e.target.value) : setEditingProjectLabel(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="logo" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Logo URL
-                  </label>
-                  <input
-                    type="text"
-                    id="logo"
-                    value={showAddProjectForm ? projectLogo : editingProjectLogo}
-                    onChange={(e) => showAddProjectForm ? setProjectLogo(e.target.value) : setEditingProjectLogo(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div className="flex justify-between space-x-4">
-                  {editingProjectId && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (window.confirm('Are you sure you want to delete this project?')) {
-                          await handleDeleteProject(editingProjectId)
-                        }
-                      }}
-                      className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <div className="flex space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddProjectForm(false)
-                        clearAddProjectForm()
-                        clearEditingProject()
-                      }}
-                      className="rounded-md bg-zinc-200 px-3 py-2 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                    >
-                      {showAddProjectForm ? 'Add Project' : 'Update Project'}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
+        <ProjectManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
 
-        {/* Edit Section Section */}
         <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
           <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             Section Management
