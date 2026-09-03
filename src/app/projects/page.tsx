@@ -27,8 +27,8 @@ export default async function ProjectGallery() {
   let projects = await getAllProjects()
   return (
     <SimpleLayout
-      title="Things I've made trying to put my mark on the world."
-      intro="I've worked on many different projects over the years but these are the ones that I'm most proud of. Each one has taught me something new and has helped me grow as a developer."
+      title="Things I've designed, built, and shipped."
+      intro="A mix of client work and systems I've built end to end - what each one does, and how it's put together."
     >
       <ul
         role="list"
