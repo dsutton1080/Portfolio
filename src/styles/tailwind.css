@@ -2,3 +2,19 @@
 @import 'tailwindcss/components';
 @import './prism.css';
 @import 'tailwindcss/utilities';
+
+/*
+ * Respect the OS "reduce motion" setting. Applied globally rather than as
+ * per-element motion-reduce: variants so that transitions added later are
+ * covered by default instead of needing to be remembered each time.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

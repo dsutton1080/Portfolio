@@ -612,6 +612,7 @@ export default function AdminActions() {
                   <span>{experience.title}</span>
                   <button
                     onClick={() => handleEditExperience(experience)}
+                    aria-label={`Edit ${experience.title}`}
                     className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
                   >
                     Edit
@@ -622,12 +623,12 @@ export default function AdminActions() {
             {(editingExperienceId || showAddExperienceForm) && (
               <form onSubmit={showAddExperienceForm ? handleExperienceSubmit : handleEditingExperienceSubmit} className="mt-6 space-y-4">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  <label htmlFor="experience-title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     Title
                   </label>
                   <input
                     type="text"
-                    id="title"
+                    id="experience-title"
                     value={showAddExperienceForm ? experienceTitle : editingExperienceTitle}
                     onChange={(e) => showAddExperienceForm ? setExperienceTitle(e.target.value) : setEditingExperienceTitle(e.target.value)}
                     className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
@@ -724,6 +725,7 @@ export default function AdminActions() {
                   <span>{project.name}</span>
                   <button
                     onClick={() => handleEditProject(project)}
+                    aria-label={`Edit ${project.name}`}
                     className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
                   >
                     Edit
@@ -861,6 +863,7 @@ export default function AdminActions() {
                   <span className="flex-1">{header.header}</span>
                   <button
                     onClick={() => handleEditSection(header)}
+                    aria-label={`Edit ${header.header}`}
                     className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
                   >
                     Edit
@@ -871,12 +874,12 @@ export default function AdminActions() {
             {(editingSectionId || showAddSectionForm) && (
               <form onSubmit={showAddSectionForm ? handleSectionSubmit : handleEditingSectionSubmit} className="mt-6 space-y-4">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  <label htmlFor="section-title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     Title
                   </label>
                   <input
                     type="text"
-                    id="title"
+                    id="section-title"
                     value={showAddSectionForm ? sectionTitle : editingSectionTitle}
                     onChange={(e) => showAddSectionForm ? setSectionTitle(e.target.value) : setEditingSectionTitle(e.target.value)}
                     className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
