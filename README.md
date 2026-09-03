@@ -70,13 +70,21 @@ Page content lives in MongoDB, not in the repo:
 | `Section` | `/resume` — grouped by `title` into Skills / Experience / Education |
 | `Experience` | `/experience` and the cards on the home page |
 | `Project` | `/projects` |
+| `Role` | The "Work" card on the home page |
 | `User` | Admin login |
 
-Edit it at `/admin`. `scripts/apply-content-updates.mjs` applies a batch of
-content changes in one command and supports `--dry-run`.
+Edit it at `/admin`.
 
-The work history on the home page is the exception — it is hard-coded in
-`src/app/page.tsx`.
+Two maintenance scripts write content directly; both take `--dry-run`:
+
+| Script | Does |
+|---|---|
+| `scripts/apply-content-updates.mjs` | Applies a batch of section content changes |
+| `scripts/seed-roles.mjs` | Loads the work history that used to be hard-coded in `src/app/page.tsx`. Run once per environment — until it has, the "Work" card renders empty |
+
+Role logos are bundled with the app (next/image only optimises static imports),
+so a `Role` stores a key into `ROLE_LOGOS` in `src/lib/roles.ts` rather than a
+path. An unknown or blank key falls back to the company initial.
 
 ## Project layout
 

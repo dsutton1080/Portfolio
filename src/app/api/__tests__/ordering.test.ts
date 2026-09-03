@@ -5,17 +5,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const prisma = vi.hoisted(() => ({
   project: { findMany: vi.fn(), findUnique: vi.fn() },
   experience: { findMany: vi.fn() },
+  role: { findMany: vi.fn() },
 }))
 vi.mock('@/lib/prisma', () => ({ prisma }))
 
 import { GET as getProjects } from '../projects/route'
 import { GET as getExperiences } from '../experiences/route'
+import { GET as getRoles } from '../roles/route'
 
 describe('list endpoints return a deterministic order', () => {
   beforeEach(() => {
     prisma.project.findMany.mockReset().mockResolvedValue([])
     prisma.project.findUnique.mockReset().mockResolvedValue(null)
     prisma.experience.findMany.mockReset().mockResolvedValue([])
+    prisma.role.findMany.mockReset().mockResolvedValue([])
   })
 
   it('sorts projects by their order field', async () => {
@@ -36,6 +39,16 @@ describe('list endpoints return a deterministic order', () => {
 
     expect(prisma.experience.findMany).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: { date: 'desc' } }),
+    )
+  })
+
+  it('sorts work history by its order field', async () => {
+    // The work history reads as a reverse-chronological list, which only holds
+    // if the admin-supplied order survives the query.
+    await getRoles(new Request('http://localhost/api/roles'))
+
+    expect(prisma.role.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ orderBy: { order: 'asc' } }),
     )
   })
 

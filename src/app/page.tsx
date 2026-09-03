@@ -1,12 +1,11 @@
-import Image, { type ImageProps } from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon } from '@/components/SocialIcons'
-import attLogo from '@/images/logos/attLogo.svg'
-import omniFederalLogo from '@/images/logos/omniFederalLogo.png'
 import { isSvgSource } from '@/lib/imageSource'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
+import { type Role, getAllRoles } from '@/lib/roles'
 import { formatDate } from '@/lib/formatDate'
 
 // Add dynamic rendering configuration
@@ -61,23 +60,7 @@ function SocialLink({
   )
 }
 
-interface Role {
-  company: string
-  title: string
-  logo?: ImageProps['src']
-  start: string | { label: string; dateTime: string }
-  end: string | { label: string; dateTime: string }
-}
-
 function Role({ role }: { role: Role }) {
-  let startLabel =
-    typeof role.start === 'string' ? role.start : role.start.label
-  let startDate =
-    typeof role.start === 'string' ? role.start : role.start.dateTime
-
-  let endLabel = typeof role.end === 'string' ? role.end : role.end.label
-  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
-
   return (
     <li className="flex gap-4">
       <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
@@ -113,45 +96,18 @@ function Role({ role }: { role: Role }) {
         <dt className="sr-only">Date</dt>
         <dd
           className="ml-auto text-xs text-zinc-500 dark:text-zinc-400"
-          aria-label={`${startLabel} until ${endLabel}`}
+          aria-label={`${role.start.label} until ${role.end.label}`}
         >
-          <time dateTime={startDate}>{startLabel}</time>{' '}
+          <time dateTime={role.start.dateTime}>{role.start.label}</time>{' '}
           <span aria-hidden="true">—</span>{' '}
-          <time dateTime={endDate}>{endLabel}</time>
+          <time dateTime={role.end.dateTime}>{role.end.label}</time>
         </dd>
       </dl>
     </li>
   )
 }
 
-function Resume() {
-  let resume: Array<Role> = [
-    {
-      company: 'Omni Federal',
-      title: 'Software Engineer',
-      logo: omniFederalLogo,
-      start: '2024',
-      end: {
-        label: 'Present',
-        dateTime: new Date().getFullYear().toString(),
-      },
-    },
-    {
-      company: 'AT&T',
-      title: 'Software Engineer II',
-      logo: attLogo,
-      start: '2022',
-      end: '2024',
-    },
-    {
-      company: 'AT&T',
-      title: 'Software Engineer I',
-      logo: attLogo,
-      start: '2021',
-      end: '2022',
-    },
-  ]
-
+function Resume({ roles }: { roles: Role[] }) {
   return (
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -159,8 +115,8 @@ function Resume() {
         <span className="ml-3">Work</span>
       </h2>
       <ol className="mt-6 space-y-4">
-        {resume.map((role, roleIndex) => (
-          <Role key={roleIndex} role={role} />
+        {roles.map((role) => (
+          <Role key={role.id} role={role} />
         ))}
       </ol>
     </div>
@@ -168,8 +124,11 @@ function Resume() {
 }
 
 export default async function Home() {
-  let experiences = (await getAllExperiences()) || []
-  experiences = experiences.slice(0, 4)
+  const [allExperiences, roles] = await Promise.all([
+    getAllExperiences(),
+    getAllRoles(),
+  ])
+  const experiences = allExperiences.slice(0, 4)
   return (
     <>
       <Container className="mt-9">
@@ -207,7 +166,7 @@ export default async function Home() {
             ))}
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
-            <Resume />
+            <Resume roles={roles} />
           </div>
         </div>
       </Container>
