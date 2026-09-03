@@ -114,6 +114,9 @@ async function main() {
   await deleteSection('Technical Intern I, AT&T')
   await deleteSection('Programmer Analyst Intern, Express Scripts')
 
+  // ---- Education: drop the Udemy course (never completed) ----
+  await deleteSection('Online')
+
   // ---- Education: add the MBA ----
   await updateSection('College', {
     contents: [
