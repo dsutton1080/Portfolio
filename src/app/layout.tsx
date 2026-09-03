@@ -9,7 +9,7 @@ import '@/styles/tailwind.css'
 export const metadata: Metadata = {
   title: {
     template: '%s - DeRon Sutton',
-    default: 'DeRon Sutton - Full Stack Software Developer',
+    default: 'DeRon Sutton - Full-Stack Software Engineer',
   },
   description:
     'I’m DeRon, a software engineer based in St. Louis. At Omni Federal I build full-stack applications for federal geospatial workflows; before that I spent three years at AT&T on internal tools used across the company.',
