@@ -133,63 +133,11 @@ export async function POST(request: Request) {
   }
 }
 
-// PATCH /api/sections/:id
-export async function PATCH(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const id = searchParams.get('id')
-
-  if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-  }
-
-  try {
-    const { content1, content2, content3, ...section } = await request.json()
-    
-    // First, get existing contents
-    const existingSection = await prisma.section.findUnique({
-      where: { id },
-      include: { contents: true }
-    })
-
-    if (!existingSection) {
-      return NextResponse.json({ error: 'Section not found' }, { status: 404 })
-    }
-
-    // Update section and contents
-    const updatedSection = await prisma.section.update({
-      where: { id },
-      data: {
-        ...section,
-        contents: {
-          upsert: [
-            {
-              where: { id: existingSection.contents[0]?.id || 'new' },
-              update: { content: content1 || '', order: 0 },
-              create: { content: content1 || '', order: 0 }
-            },
-            {
-              where: { id: existingSection.contents[1]?.id || 'new' },
-              update: { content: content2 || '', order: 1 },
-              create: { content: content2 || '', order: 1 }
-            },
-            {
-              where: { id: existingSection.contents[2]?.id || 'new' },
-              update: { content: content3 || '', order: 2 },
-              create: { content: content3 || '', order: 2 }
-            }
-          ]
-        }
-      },
-      include: {
-        contents: true
-      }
-    })
-    return NextResponse.json(updatedSection)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-}
+// There is deliberately no PATCH here. Updates go to the /api/sections/[id]
+// handler: the version that used to live in this file upserted contents with
+// `existingSection.contents[n]?.id || 'new'`, and 'new' is not a valid
+// ObjectId, so saving any section with fewer than three content rows failed.
+// Removing it keeps the broken path from being reachable over HTTP.
 
 // DELETE /api/sections/:id
 export async function DELETE(request: Request) {
