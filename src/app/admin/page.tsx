@@ -4,6 +4,7 @@ import { SimpleLayout } from '@/components/SimpleLayout'
 import { useState, useEffect } from 'react'
 import { ExperienceManager } from '@/components/admin/ExperienceManager'
 import { ProjectManager } from '@/components/admin/ProjectManager'
+import { RoleManager } from '@/components/admin/RoleManager'
 import { SectionManager } from '@/components/admin/SectionManager'
 import { CheckCircleIcon, XMarkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
@@ -108,6 +109,8 @@ export default function AdminActions() {
         />
 
         <ProjectManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
+
+        <RoleManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
 
         <SectionManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
 

@@ -202,6 +202,61 @@ export const deleteExperience = async (experienceId: string) => {
   return response.json()
 }
 
+// Role services (the work history on the home page)
+export const getRoles = async () => {
+  const response = await fetch(createApiUrl(`/api/roles?path=all`))
+  if (!response.ok) {
+    throw new Error('Failed to fetch roles')
+  }
+  return response.json()
+}
+
+export const getRoleById = async (roleId: string) => {
+  const response = await fetch(createApiUrl(`/api/roles?id=${roleId}`))
+  if (!response.ok) {
+    throw new Error('Failed to fetch role')
+  }
+  return response.json()
+}
+
+export const createRole = async (role: any) => {
+  const response = await fetch(createApiUrl(`/api/roles`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(role),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to create role')
+  }
+  return response.json()
+}
+
+export const updateRole = async (roleId: string, role: any) => {
+  const response = await fetch(createApiUrl(`/api/roles?id=${roleId}`), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(role),
+  })
+  if (!response.ok) {
+    throw new Error('Failed to update role')
+  }
+  return response.json()
+}
+
+export const deleteRole = async (roleId: string) => {
+  const response = await fetch(createApiUrl(`/api/roles?id=${roleId}`), {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error('Failed to delete role')
+  }
+  return response.json()
+}
+
 // User services
 export const getUsers = async () => {
   const response = await fetch(createApiUrl(`/api/users?path=all`))

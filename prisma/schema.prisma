@@ -61,3 +61,18 @@ model Skills {
   name  String @default("New Skill")
   order Int?
 }
+
+/// A line in the "Work" card on the home page. Kept separate from Experience,
+/// which is prose about a problem rather than a dated position.
+model Role {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  company String  @default("New Role")
+  title   String  @default("")
+  /// Key into ROLE_LOGOS in src/lib/roles.ts, not a path: next/image needs a
+  /// static import to optimise the file.
+  logo    String?
+  start   String  @default("")
+  /// Either a year or "Present".
+  end     String  @default("")
+  order   Int?
+}

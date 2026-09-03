@@ -3,7 +3,7 @@
 import { createContext, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { ThemeProvider, useTheme } from 'next-themes'
-import { getCurrentUser, loginUser, logoutUser } from '@/lib/auth'
+import { type SessionUser, getCurrentUser, loginUser, logoutUser } from '@/lib/auth'
 
 function usePrevious<T>(value: T) {
   let ref = useRef<T>()
@@ -40,8 +40,14 @@ function ThemeWatcher() {
 }
 
 type UserContextType = {
-  user: any
-  setUser: React.Dispatch<React.SetStateAction<any>>
+  user: SessionUser | null
+  /**
+   * Not a state setter, despite the name: it writes localStorage as well as
+   * React state, so it cannot honour the functional-updater form
+   * `setUser(prev => ...)`. Typing it as a Dispatch<SetStateAction> advertised
+   * an updater the provider would have stored as the user itself.
+   */
+  setUser: (user: SessionUser | null) => void
 }
 export const UserContext = createContext<UserContextType>({
   user: null,
@@ -52,7 +58,7 @@ export default function UserProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [user, setUserState] = useState(null)
+  const [user, setUserState] = useState<SessionUser | null>(null)
 
   // On mount, initialize user from localStorage
   useEffect(() => {
@@ -60,7 +66,7 @@ export default function UserProvider({
   }, [])
 
   // When user changes, update localStorage
-  const setUser = (user: any) => {
+  const setUser = (user: SessionUser | null) => {
     setUserState(user)
     if (user) loginUser(user)
     else logoutUser()
