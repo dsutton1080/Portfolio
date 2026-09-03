@@ -5,6 +5,7 @@ import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon } from '@/components/SocialIcons'
 import attLogo from '@/images/logos/attLogo.svg'
 import omniFederalLogo from '@/images/logos/omniFederalLogo.png'
+import { isSvgSource } from '@/lib/imageSource'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
 import { formatDate } from '@/lib/formatDate'
 
@@ -66,15 +67,6 @@ interface Role {
   logo?: ImageProps['src']
   start: string | { label: string; dateTime: string }
   end: string | { label: string; dateTime: string }
-}
-
-// The logo set mixes raster (PNG) and vector (SVG) sources. next/image can only
-// optimize the raster ones: it returns HTTP 400 for SVG unless `dangerouslyAllowSVG`
-// is enabled, so SVGs must opt out of the optimizer individually.
-function isSvgSource(src: ImageProps['src']) {
-  const url =
-    typeof src === 'string' ? src : 'default' in src ? src.default.src : src.src
-  return url.endsWith('.svg')
 }
 
 function Role({ role }: { role: Role }) {

@@ -57,6 +57,8 @@ Open <http://localhost:3000>.
 | `npm start` | Serve a production build |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Run the test suite once |
+| `npm run test:watch` | Tests in watch mode |
 | `npm run lighthouse` | Lighthouse CI against the deployed site |
 
 ## Content
@@ -96,11 +98,20 @@ the build rather than shipping.
 
 Two GitHub Actions workflows run on top of that:
 
-- **CI** — lint, typecheck and build on every pull request.
+- **CI** — lint, typecheck, test and build on every pull request.
 - **Lighthouse** — audits the deployed site against accessibility assertions and
   resource-size budgets defined in `lighthouserc.js`.
 
-There is currently no automated test suite.
+Tests run with [Vitest](https://vitest.dev) and Testing Library:
+
+```bash
+npm test          # once
+npm run test:watch
+```
+
+They are colocated with the code (`*.test.ts` / `*.test.tsx`). The suite
+deliberately targets behaviour that has regressed before rather than chasing a
+coverage number.
 
 ## License
 
