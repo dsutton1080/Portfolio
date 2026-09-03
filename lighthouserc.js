@@ -69,10 +69,10 @@ module.exports = {
         // another 380 KB regression.
         //
         //   measured live          budget
-        //   images    133,721 B -> 160,000
+        //   images     ~16,900 B ->  30,000  (attLogo + avatar + omni)
         //   scripts   114,752 B -> 140,000
         //   stylesheet  8,486 B ->  15,000
-        //   total     264,953 B -> 320,000
+        //   total     ~148,200 B -> 180,000
         //
         // The image number is still dominated by two auto-traced SVG logos
         // (attLogo 108,544 B + graceLogo 21,873 B gzip). Replacing those with
@@ -80,8 +80,8 @@ module.exports = {
         // and the total to ~160,000.
         'resource-summary:script:size': ['error', { maxNumericValue: 140000 }],
         'resource-summary:stylesheet:size': ['error', { maxNumericValue: 15000 }],
-        'resource-summary:image:size': ['error', { maxNumericValue: 160000 }],
-        'resource-summary:total:size': ['error', { maxNumericValue: 320000 }],
+        'resource-summary:image:size': ['error', { maxNumericValue: 30000 }],
+        'resource-summary:total:size': ['error', { maxNumericValue: 180000 }],
 
         // ---- Timing: watch first, tighten later -------------------------
         'largest-contentful-paint': 'warn',

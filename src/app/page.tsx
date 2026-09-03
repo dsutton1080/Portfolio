@@ -4,6 +4,7 @@ import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon } from '@/components/SocialIcons'
 import attLogo from '@/images/logos/attLogo.svg'
+import omniFederalLogo from '@/images/logos/omniFederalLogo.png'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
 import { formatDate } from '@/lib/formatDate'
 
@@ -136,6 +137,7 @@ function Resume() {
     {
       company: 'Omni Federal',
       title: 'Software Engineer',
+      logo: omniFederalLogo,
       start: '2024',
       end: {
         label: 'Present',
