@@ -184,9 +184,11 @@ export default async function Home() {
             Full Stack Software Developer
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I&apos;m DeRon, a full stack software developer based in St. Louis. I
-            specialize in building high-quality websites and applications with a
-            focus on performance, accessibility, and user experience.
+            I&apos;m DeRon, a software engineer based in St. Louis. At Omni
+            Federal I build full-stack applications for federal geospatial
+            workflows; before that I spent three years at AT&amp;T on internal
+            tools used across the company. I care about performance and
+            accessibility, and I measure both rather than assuming.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink

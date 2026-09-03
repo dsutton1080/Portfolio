@@ -21,7 +21,11 @@ export async function GET(request: Request) {
 
   // Handle /api/experiences/all (default)
   try {
-    const experiences = await prisma.experience.findMany()
+    // The home page slices the first 4 as "most recent", so the order has
+    // to come from the database rather than whatever Mongo returns.
+    const experiences = await prisma.experience.findMany({
+      orderBy: { date: 'desc' },
+    })
     return NextResponse.json(experiences)
   } catch (error: any) {
     console.error(error)
