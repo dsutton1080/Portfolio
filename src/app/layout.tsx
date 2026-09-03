@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: 'DeRon Sutton - Full Stack Software Developer',
   },
   description:
-    'I’m DeRon, a full stack software developer based in St. Louis. I specialize in building high-quality websites and applications with a focus on performance, accessibility, and user experience.',
+    'I’m DeRon, a software engineer based in St. Louis. At Omni Federal I build full-stack applications for federal geospatial workflows; before that I spent three years at AT&T on internal tools used across the company.',
   alternates: {
     types: {
       'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
