@@ -65,7 +65,11 @@ export const createSection = async (section: any) => {
 }
 
 export const updateSection = async (sectionId: string, section: any) => {
-  const response = await fetch(createApiUrl(`/api/sections?id=${sectionId}`), {
+  // Uses the /api/sections/[id] handler rather than the ?id= one. The latter
+  // upserts contents with `existingSection.contents[n]?.id || 'new'`, and
+  // 'new' is not a valid ObjectId - so any section with fewer than three
+  // content rows fails to save.
+  const response = await fetch(createApiUrl(`/api/sections/${sectionId}`), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

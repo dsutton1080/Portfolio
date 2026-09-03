@@ -2,15 +2,9 @@
 
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { useState, useEffect } from 'react'
-import {
-  createSection,
-  updateSection,
-  deleteSection,
-  getSectionHeaders
-} from '../services'
-import { Header } from '@/lib/resume'
 import { ExperienceManager } from '@/components/admin/ExperienceManager'
 import { ProjectManager } from '@/components/admin/ProjectManager'
+import { SectionManager } from '@/components/admin/SectionManager'
 import { CheckCircleIcon, XMarkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 interface SuccessNotificationProps {
@@ -78,163 +72,10 @@ function ErrorNotification({ message, onClose }: ErrorNotificationProps) {
 }
 
 export default function AdminActions() {
-  const [sectionTitle, setSectionTitle] = useState('')
-  const [sectionOrder, setSectionOrder] = useState('')
-  const [sectionHeader, setSectionHeader] = useState('')
-  const [sectionSubHeader, setSectionSubHeader] = useState('')
-  const [sectionContent1, setSectionContent1] = useState('')
-  const [sectionContent2, setSectionContent2] = useState('')
-  const [sectionContent3, setSectionContent3] = useState('')
-
-  const [editingSectionId, setEditingSectionId] = useState('')
-  const [editingSectionTitle, setEditingSectionTitle] = useState('')
-  const [editingSectionOrder, setEditingSectionOrder] = useState('')
-  const [editingSectionHeader, setEditingSectionHeader] = useState('')
-  const [editingSectionSubHeader, setEditingSectionSubHeader] = useState('')
-  const [editingSectionContent1, setEditingSectionContent1] = useState('')
-  const [editingSectionContent2, setEditingSectionContent2] = useState('')
-  const [editingSectionContent3, setEditingSectionContent3] = useState('')
-
-
-  const [headers, setHeaders] = useState<Header[]>([])
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const [showError, setShowError] = useState(false)
-
-  // Add new state variables for editing experiences
-
-  // Add new state variables for editing projects
-
-  // Add mode state variables
-
-  const [showAddSectionForm, setShowAddSectionForm] = useState(false)
-
-  const handleEditSection = (section: any) => {
-    setShowAddSectionForm(false)
-    clearAddSectionForm()
-    fetch(`/api/sections/${section.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setEditingSectionId(data.id)
-        setEditingSectionTitle(data.title || '')
-        setEditingSectionOrder(data.order || '')
-        setEditingSectionHeader(data.header || '')
-        setEditingSectionSubHeader(data.subHeader || '')
-        setEditingSectionContent1(data.contents?.[0]?.content || '')
-        setEditingSectionContent2(data.contents?.[1]?.content || '')
-        setEditingSectionContent3(data.contents?.[2]?.content || '')
-      })
-      .catch((error) => {
-        console.error('Error fetching section:', error)
-      })
-  }
-
-  const handleSectionSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!sectionTitle || !sectionHeader) {
-      setErrorMessage('Title and Header are required')
-      return
-    }
-
-    let requestBody = {
-      title: sectionTitle,
-      order: parseInt(sectionOrder),
-      header: sectionHeader,
-      subHeader: sectionSubHeader,
-      contents: {
-        records: [
-          { content: sectionContent1 },
-          { content: sectionContent2 },
-          { content: sectionContent3 },
-        ],
-      },
-    }
-
-    await createSection(requestBody)
-      .then(() => {
-        setSuccessMessage('Section added successfully')
-        clearAddSectionForm()
-        getSectionHeaders().then((response) => {
-          setHeaders(response)
-        })
-      })
-      .catch((error) => {
-        setErrorMessage('Error adding section')
-        console.error('Error:', error)
-      })
-  }
-
-  const handleEditingSectionSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!editingSectionTitle || !editingSectionHeader) {
-      setErrorMessage('Title and Header are required')
-      return
-    }
-
-    let requestBody = {
-      title: editingSectionTitle,
-      order: parseInt(editingSectionOrder) || 0,
-      header: editingSectionHeader,
-      subHeader: editingSectionSubHeader,
-      content1: editingSectionContent1,
-      content2: editingSectionContent2,
-      content3: editingSectionContent3
-    }
-
-    await updateSection(editingSectionId, requestBody)
-      .then(() => {
-        setSuccessMessage('Section updated successfully')
-        clearEditingSection()
-        getSectionHeaders().then((response) => {
-          setHeaders(response)
-        })
-      })
-      .catch((error) => {
-        setErrorMessage('Error updating section')
-        console.error('Error:', error)
-      })
-  }
-
-  const clearEditingSection = () => {
-    setEditingSectionId('')
-    setEditingSectionTitle('')
-    setEditingSectionOrder('')
-    setEditingSectionHeader('')
-    setEditingSectionSubHeader('')
-    setEditingSectionContent1('')
-    setEditingSectionContent2('')
-    setEditingSectionContent3('')
-  }
-
-  const clearAddSectionForm = () => {
-    setSectionTitle('')
-    setSectionOrder('')
-    setSectionHeader('')
-    setSectionSubHeader('')
-    setSectionContent1('')
-    setSectionContent2('')
-    setSectionContent3('')
-  }
-
-  const fetchHeaders = async () => {
-    try {
-      const headersData = await getSectionHeaders()
-      setHeaders(headersData)
-    } catch (error) {
-      setShowError(true)
-      setErrorMessage('Failed to fetch section headers.')
-    }
-  }
-
-  // Add useEffect to fetch data
-  useEffect(() => {
-    getSectionHeaders().then((response) => {
-      setHeaders(response)
-    })
-  }, [])
 
   useEffect(() => {
     if (successMessage) {
@@ -258,19 +99,6 @@ export default function AdminActions() {
     }
   }, [errorMessage])
 
-  const handleDeleteSection = async (id: string) => {
-    try {
-      await deleteSection(id)
-      await fetchHeaders()
-      clearEditingSection()
-      setShowSuccess(true)
-      setSuccessMessage('Section deleted successfully!')
-    } catch (error) {
-      setShowError(true)
-      setErrorMessage('Failed to delete section.')
-    }
-  }
-
   return (
     <SimpleLayout title="Admin" intro="">
       <div className="space-y-8">
@@ -281,170 +109,21 @@ export default function AdminActions() {
 
         <ProjectManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
 
-        <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
-          <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            Section Management
-          </h2>
-          <div className="mt-6">
-            <div>
-              <div className="flex items-center px-3">
-                <span className="flex-1"></span>
-                <button
-                  onClick={() => {
-                    setShowAddSectionForm(true)
-                    clearAddSectionForm()
-                  }}
-                  className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                >
-                  Create
-                </button>
-              </div>
-              {headers && headers.map((header: any, index: number) => (
-                <div
-                  key={header.id}
-                  className={`flex items-center px-3 ${
-                    (index + 1) % 2 === 0 ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''
-                  }`}
-                >
-                  <span className="flex-1">{header.header}</span>
-                  <button
-                    onClick={() => handleEditSection(header)}
-                    aria-label={`Edit ${header.header}`}
-                    className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                  >
-                    Edit
-                  </button>
-                </div>
-              ))}
-            </div>
-            {(editingSectionId || showAddSectionForm) && (
-              <form onSubmit={showAddSectionForm ? handleSectionSubmit : handleEditingSectionSubmit} className="mt-6 space-y-4">
-                <div>
-                  <label htmlFor="section-title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="section-title"
-                    value={showAddSectionForm ? sectionTitle : editingSectionTitle}
-                    onChange={(e) => showAddSectionForm ? setSectionTitle(e.target.value) : setEditingSectionTitle(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="order" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Order
-                  </label>
-                  <input
-                    type="number"
-                    id="order"
-                    value={showAddSectionForm ? sectionOrder : editingSectionOrder}
-                    onChange={(e) => showAddSectionForm ? setSectionOrder(e.target.value) : setEditingSectionOrder(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="header" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Header
-                  </label>
-                  <input
-                    type="text"
-                    id="header"
-                    value={showAddSectionForm ? sectionHeader : editingSectionHeader}
-                    onChange={(e) => showAddSectionForm ? setSectionHeader(e.target.value) : setEditingSectionHeader(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="subHeader" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Sub Header
-                  </label>
-                  <input
-                    type="text"
-                    id="subHeader"
-                    value={showAddSectionForm ? sectionSubHeader : editingSectionSubHeader}
-                    onChange={(e) => showAddSectionForm ? setSectionSubHeader(e.target.value) : setEditingSectionSubHeader(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="content1" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Content 1
-                  </label>
-                  <textarea
-                    id="content1"
-                    value={showAddSectionForm ? sectionContent1 : editingSectionContent1}
-                    onChange={(e) => showAddSectionForm ? setSectionContent1(e.target.value) : setEditingSectionContent1(e.target.value)}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="content2" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Content 2
-                  </label>
-                  <textarea
-                    id="content2"
-                    value={showAddSectionForm ? sectionContent2 : editingSectionContent2}
-                    onChange={(e) => showAddSectionForm ? setSectionContent2(e.target.value) : setEditingSectionContent2(e.target.value)}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="content3" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Content 3
-                  </label>
-                  <textarea
-                    id="content3"
-                    value={showAddSectionForm ? sectionContent3 : editingSectionContent3}
-                    onChange={(e) => showAddSectionForm ? setSectionContent3(e.target.value) : setEditingSectionContent3(e.target.value)}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div className="flex justify-between space-x-4">
-                  {editingSectionId && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (window.confirm('Are you sure you want to delete this section?')) {
-                          await handleDeleteSection(editingSectionId)
-                        }
-                      }}
-                      className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <div className="flex space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddSectionForm(false)
-                        clearAddSectionForm()
-                        clearEditingSection()
-                      }}
-                      className="rounded-md bg-zinc-200 px-3 py-2 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                    >
-                      {showAddSectionForm ? 'Add Section' : 'Update Section'}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
+        <SectionManager onSuccess={setSuccessMessage} onError={setErrorMessage} />
 
         {/* Success and Error Notifications */}
-        {showSuccess && <SuccessNotification message={successMessage} onClose={() => setShowSuccess(false)} />}
-        {showError && <ErrorNotification message={errorMessage} onClose={() => setShowError(false)} />}
+        {showSuccess && (
+          <SuccessNotification
+            message={successMessage}
+            onClose={() => setShowSuccess(false)}
+          />
+        )}
+        {showError && (
+          <ErrorNotification
+            message={errorMessage}
+            onClose={() => setShowError(false)}
+          />
+        )}
       </div>
     </SimpleLayout>
   )
