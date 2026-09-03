@@ -13,11 +13,6 @@ export const metadata: Metadata = {
   },
   description:
     'I’m DeRon, a software engineer based in St. Louis. At Omni Federal I build full-stack applications for federal geospatial workflows; before that I spent three years at AT&T on internal tools used across the company.',
-  alternates: {
-    types: {
-      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
-    },
-  },
 }
 
 export default function RootLayout({

@@ -21,7 +21,11 @@ export async function GET(request: Request) {
 
   // Handle /api/projects/all (default)
   try {
-    const projects = await prisma.project.findMany()
+    // The admin UI collects an `order` for each project, so honour it here.
+    // Without this the list came back in whatever order Mongo produced.
+    const projects = await prisma.project.findMany({
+      orderBy: { order: 'asc' },
+    })
     return NextResponse.json(projects)
   } catch (error: any) {
     console.error(error)
