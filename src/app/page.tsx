@@ -4,8 +4,6 @@ import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon } from '@/components/SocialIcons'
 import attLogo from '@/images/logos/attLogo.svg'
-import graceLogo from '@/images/logos/graceLogo.svg'
-import expressScriptsLogo from '@/images/logos/expressScriptsLogo.png'
 import { type Experience, getAllExperiences } from '@/lib/experiences'
 import { formatDate } from '@/lib/formatDate'
 
@@ -136,28 +134,11 @@ function Resume() {
       },
     },
     {
-      company: 'Grace Church',
-      title: 'Technical/Automation Consultant',
-      logo: graceLogo,
-      start: '2023',
-      end: {
-        label: 'Present',
-        dateTime: new Date().getFullYear().toString(),
-      },
-    },
-    {
       company: 'AT&T',
       title: 'Technical Intern',
       logo: attLogo,
       start: '2019',
       end: '2020',
-    },
-    {
-      company: 'Express Scripts',
-      title: 'Technical Intern',
-      logo: expressScriptsLogo,
-      start: '2018',
-      end: '2018',
     },
   ]
 
