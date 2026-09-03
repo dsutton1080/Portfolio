@@ -62,7 +62,7 @@ function SocialLink({
 interface Role {
   company: string
   title: string
-  logo: ImageProps['src']
+  logo?: ImageProps['src']
   start: string | { label: string; dateTime: string }
   end: string | { label: string; dateTime: string }
 }
@@ -89,13 +89,23 @@ function Role({ role }: { role: Role }) {
     <li className="flex gap-4">
       <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
         <div className="h-7 w-7 overflow-hidden rounded-full">
-          <Image
-            src={role.logo}
-            alt=""
-            width={28}
-            height={28}
-            unoptimized={isSvgSource(role.logo)}
-          />
+          {role.logo ? (
+            <Image
+              src={role.logo}
+              alt=""
+              width={28}
+              height={28}
+              unoptimized={isSvgSource(role.logo)}
+            />
+          ) : (
+            // Decorative: the company name is already announced by the <dd> below.
+            <div
+              aria-hidden="true"
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-700 dark:text-zinc-200"
+            >
+              {role.company.charAt(0)}
+            </div>
+          )}
         </div>
       </div>
       <dl className="flex flex-auto flex-wrap gap-x-2">
@@ -124,10 +134,9 @@ function Role({ role }: { role: Role }) {
 function Resume() {
   let resume: Array<Role> = [
     {
-      company: 'AT&T',
-      title: 'Software Engineer II',
-      logo: attLogo,
-      start: '2021',
+      company: 'Omni Federal',
+      title: 'Software Engineer',
+      start: '2024',
       end: {
         label: 'Present',
         dateTime: new Date().getFullYear().toString(),
@@ -135,10 +144,17 @@ function Resume() {
     },
     {
       company: 'AT&T',
-      title: 'Technical Intern',
+      title: 'Software Engineer II',
       logo: attLogo,
-      start: '2019',
-      end: '2020',
+      start: '2022',
+      end: '2024',
+    },
+    {
+      company: 'AT&T',
+      title: 'Software Engineer I',
+      logo: attLogo,
+      start: '2021',
+      end: '2022',
     },
   ]
 
