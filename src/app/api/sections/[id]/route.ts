@@ -53,7 +53,7 @@ export async function PATCH(
     const { title, order, header, subHeader, content1, content2, content3 } = body
 
     // First update the section
-    const section = await prisma.section.update({
+    await prisma.section.update({
       where: {
         id: params.id,
       },

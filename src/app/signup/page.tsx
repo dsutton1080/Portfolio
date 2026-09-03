@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 export default function Signup() {
   const { setUser } = useContext(UserContext)
   const [email, setEmail] = useState('')
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdmin] = useState(false)
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [successMessage, setSuccessMessage] = useState('')

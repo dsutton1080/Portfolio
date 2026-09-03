@@ -103,8 +103,6 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
-  const path = searchParams.get('path')
-
   if (!id) {
     return NextResponse.json({ error: 'ID is required' }, { status: 400 })
   }

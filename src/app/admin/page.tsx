@@ -3,7 +3,6 @@
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { useState, useEffect } from 'react'
 import {
-  getSections,
   createSection,
   updateSection,
   deleteSection,
@@ -15,25 +14,10 @@ import {
   createExperience,
   updateExperience,
   deleteExperience,
-  getExperiences,
-  getUsers,
-  updateUser,
-  changeUserRole,
-  getContents,
-  createContent,
-  updateContent,
-  deleteContent,
-  getSectionById
+  getExperiences
 } from '../services'
-import { Header, Content } from '@/lib/resume'
-import { Fragment } from 'react'
-import { Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Header } from '@/lib/resume'
 import { CheckCircleIcon, XMarkIcon, XCircleIcon } from '@heroicons/react/24/outline'
-
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(' ')
-}
 
 interface SuccessNotificationProps {
   message: string
@@ -111,7 +95,6 @@ export default function AdminActions() {
   const [sectionContent2, setSectionContent2] = useState('')
   const [sectionContent3, setSectionContent3] = useState('')
 
-  const [editingContents, setEditingContents] = useState<Content[]>([])
   const [editingSectionId, setEditingSectionId] = useState('')
   const [editingSectionTitle, setEditingSectionTitle] = useState('')
   const [editingSectionOrder, setEditingSectionOrder] = useState('')
@@ -129,7 +112,6 @@ export default function AdminActions() {
   const [projectLogo, setProjectLogo] = useState('')
 
   const [headers, setHeaders] = useState<Header[]>([])
-  const [selectedHeader, setSelectedHeader] = useState<Header | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
@@ -153,9 +135,6 @@ export default function AdminActions() {
   const [projects, setProjects] = useState<any[]>([])
 
   // Add mode state variables
-  const [isAddingSection, setIsAddingSection] = useState(false)
-  const [isAddingExperience, setIsAddingExperience] = useState(false)
-  const [isAddingProject, setIsAddingProject] = useState(false)
 
   const [showAddExperienceForm, setShowAddExperienceForm] = useState(false)
   const [showAddProjectForm, setShowAddProjectForm] = useState(false)
@@ -175,7 +154,6 @@ export default function AdminActions() {
         setEditingSectionContent1(data.contents?.[0]?.content || '')
         setEditingSectionContent2(data.contents?.[1]?.content || '')
         setEditingSectionContent3(data.contents?.[2]?.content || '')
-        setEditingContents(data.contents?.map((c: any) => ({ id: c.id, order: c.order })) || [])
       })
       .catch((error) => {
         console.error('Error fetching section:', error)
@@ -203,7 +181,7 @@ export default function AdminActions() {
     }
 
     await createExperience(requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Experience added successfully')
         clearAddExperienceForm()
       })
@@ -236,7 +214,7 @@ export default function AdminActions() {
     }
 
     await createSection(requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Section added successfully')
         clearAddSectionForm()
         getSectionHeaders().then((response) => {
@@ -267,7 +245,7 @@ export default function AdminActions() {
     }
 
     await createProject(requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Project added successfully')
         clearAddProjectForm()
       })
@@ -275,21 +253,6 @@ export default function AdminActions() {
         setErrorMessage('Error adding project')
         console.error('Error:', error)
       })
-  }
-
-  const handleDropdownSelection = async (header: Header) => {
-    await getSectionById(header.id).then((response) => {
-      setEditingSectionId(response?.id || '')
-      setEditingSectionTitle(response?.title || '')
-      setEditingSectionOrder(String(response?.order || ''))
-      setEditingSectionHeader(response?.header || '')
-      setEditingSectionSubHeader(response?.subHeader || '')
-      setEditingContents(response?.contents || [])
-      setEditingSectionContent1(response?.contents?.[0]?.content || '')
-      setEditingSectionContent2(response?.contents?.[1]?.content || '')
-      setEditingSectionContent3(response?.contents?.[2]?.content || '')
-    })
-    setSelectedHeader(header)
   }
 
   const handleEditingSectionSubmit = async (event: React.FormEvent) => {
@@ -311,7 +274,7 @@ export default function AdminActions() {
     }
 
     await updateSection(editingSectionId, requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Section updated successfully')
         clearEditingSection()
         getSectionHeaders().then((response) => {
@@ -320,25 +283,6 @@ export default function AdminActions() {
       })
       .catch((error) => {
         setErrorMessage('Error updating section')
-        console.error('Error:', error)
-      })
-  }
-
-  const handleDelete = async () => {
-    if (!editingSectionId) {
-      setErrorMessage('Section must be selected to delete')
-      return
-    }
-    await deleteSection(editingSectionId)
-      .then((response) => {
-        setSuccessMessage('Section deleted successfully')
-        clearEditingSection()
-        getSectionHeaders().then((response) => {
-          setHeaders(response)
-        })
-      })
-      .catch((error) => {
-        setErrorMessage('Error deleting section')
         console.error('Error:', error)
       })
   }
@@ -410,7 +354,7 @@ export default function AdminActions() {
     }
 
     await updateExperience(editingExperienceId, requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Experience updated successfully')
         clearEditingExperience()
         fetchExperiences()
@@ -458,7 +402,7 @@ export default function AdminActions() {
     }
 
     await updateProject(editingProjectId, requestBody)
-      .then((response) => {
+      .then(() => {
         setSuccessMessage('Project updated successfully')
         clearEditingProject()
         fetchProjects()

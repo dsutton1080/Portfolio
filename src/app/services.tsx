@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 // Helper function to get the base URL
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { loginUser } from '@/lib/auth'
 
 export default function Login() {
-  const { user, setUser } = useContext(UserContext)
+  const { setUser } = useContext(UserContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
