@@ -10,13 +10,10 @@ import {
   createProject,
   updateProject,
   deleteProject,
-  getProjects,
-  createExperience,
-  updateExperience,
-  deleteExperience,
-  getExperiences
+  getProjects
 } from '../services'
 import { Header } from '@/lib/resume'
+import { ExperienceManager } from '@/components/admin/ExperienceManager'
 import { CheckCircleIcon, XMarkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 interface SuccessNotificationProps {
@@ -84,9 +81,6 @@ function ErrorNotification({ message, onClose }: ErrorNotificationProps) {
 }
 
 export default function AdminActions() {
-  const [experienceTitle, setExperienceTitle] = useState('')
-  const [experienceDate, setExperienceDate] = useState('')
-  const [experienceContent, setExperienceContent] = useState('')
   const [sectionTitle, setSectionTitle] = useState('')
   const [sectionOrder, setSectionOrder] = useState('')
   const [sectionHeader, setSectionHeader] = useState('')
@@ -118,11 +112,6 @@ export default function AdminActions() {
   const [showError, setShowError] = useState(false)
 
   // Add new state variables for editing experiences
-  const [editingExperienceId, setEditingExperienceId] = useState('')
-  const [editingExperienceTitle, setEditingExperienceTitle] = useState('')
-  const [editingExperienceDate, setEditingExperienceDate] = useState('')
-  const [editingExperienceContent, setEditingExperienceContent] = useState('')
-  const [experiences, setExperiences] = useState<any[]>([])
 
   // Add new state variables for editing projects
   const [editingProjectId, setEditingProjectId] = useState('')
@@ -136,7 +125,6 @@ export default function AdminActions() {
 
   // Add mode state variables
 
-  const [showAddExperienceForm, setShowAddExperienceForm] = useState(false)
   const [showAddProjectForm, setShowAddProjectForm] = useState(false)
   const [showAddSectionForm, setShowAddSectionForm] = useState(false)
 
@@ -157,37 +145,6 @@ export default function AdminActions() {
       })
       .catch((error) => {
         console.error('Error fetching section:', error)
-      })
-  }
-
-  const handleExperienceSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!experienceTitle || !experienceDate || !experienceContent) {
-      setErrorMessage('All fields are required')
-      return
-    }
-
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
-    if (!dateRegex.test(experienceDate)) {
-      setErrorMessage('Invalid date format')
-      return
-    }
-
-    let requestBody = {
-      title: experienceTitle,
-      date: experienceDate,
-      content: experienceContent,
-    }
-
-    await createExperience(requestBody)
-      .then(() => {
-        setSuccessMessage('Experience added successfully')
-        clearAddExperienceForm()
-      })
-      .catch((error) => {
-        setErrorMessage('Error adding experience')
-        console.error('Error:', error)
       })
   }
 
@@ -308,12 +265,6 @@ export default function AdminActions() {
     setSectionContent3('')
   }
 
-  const clearAddExperienceForm = () => {
-    setExperienceTitle('')
-    setExperienceDate('')
-    setExperienceContent('')
-  }
-
   const clearAddProjectForm = () => {
     setProjectName('')
     setProjectDescription('')
@@ -321,55 +272,6 @@ export default function AdminActions() {
     setProjectLabel('')
     setProjectOrder('')
     setProjectLogo('')
-  }
-
-  // Add new handlers for editing experiences
-  const handleEditExperience = (experience: any) => {
-    setShowAddExperienceForm(false)
-    clearAddExperienceForm()
-    setEditingExperienceId(experience.id)
-    setEditingExperienceTitle(experience.title)
-    setEditingExperienceDate(experience.date)
-    setEditingExperienceContent(experience.content)
-  }
-
-  const handleEditingExperienceSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-
-    if (!editingExperienceTitle || !editingExperienceDate || !editingExperienceContent) {
-      setErrorMessage('All fields are required')
-      return
-    }
-
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
-    if (!dateRegex.test(editingExperienceDate)) {
-      setErrorMessage('Invalid date format')
-      return
-    }
-
-    let requestBody = {
-      title: editingExperienceTitle,
-      date: editingExperienceDate,
-      content: editingExperienceContent,
-    }
-
-    await updateExperience(editingExperienceId, requestBody)
-      .then(() => {
-        setSuccessMessage('Experience updated successfully')
-        clearEditingExperience()
-        fetchExperiences()
-      })
-      .catch((error) => {
-        setErrorMessage('Error updating experience')
-        console.error('Error:', error)
-      })
-  }
-
-  const clearEditingExperience = () => {
-    setEditingExperienceId('')
-    setEditingExperienceTitle('')
-    setEditingExperienceDate('')
-    setEditingExperienceContent('')
   }
 
   // Add new handlers for editing projects
@@ -424,15 +326,6 @@ export default function AdminActions() {
   }
 
   // Add fetch functions
-  const fetchExperiences = async () => {
-    try {
-      const response = await getExperiences()
-      setExperiences(response)
-    } catch (error) {
-      console.error('Error fetching experiences:', error)
-    }
-  }
-
   const fetchProjects = async () => {
     try {
       const response = await getProjects()
@@ -454,7 +347,6 @@ export default function AdminActions() {
 
   // Add useEffect to fetch data
   useEffect(() => {
-    fetchExperiences()
     fetchProjects()
   }, [])
 
@@ -486,19 +378,6 @@ export default function AdminActions() {
     }
   }, [errorMessage])
 
-  const handleDeleteExperience = async (id: string) => {
-    try {
-      await deleteExperience(id)
-      await fetchExperiences()
-      clearEditingExperience()
-      setShowSuccess(true)
-      setSuccessMessage('Experience deleted successfully!')
-    } catch (error) {
-      setShowError(true)
-      setErrorMessage('Failed to delete experience.')
-    }
-  }
-
   const handleDeleteProject = async (id: string) => {
     try {
       await deleteProject(id)
@@ -528,120 +407,11 @@ export default function AdminActions() {
   return (
     <SimpleLayout title="Admin" intro="">
       <div className="space-y-8">
-        {/* Edit Experience Section */}
-        <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
-          <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            Experience Management
-          </h2>
-          <div className="mt-6">
-            <div>
-              <div className="flex items-center justify-end px-3">
-                <button
-                  onClick={() => {
-                    setShowAddExperienceForm(true)
-                    clearAddExperienceForm()
-                  }}
-                  className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                >
-                  Create
-                </button>
-              </div>
-              {experiences.map((experience, index) => (
-                <div 
-                  key={experience.id} 
-                  className={`flex items-center justify-between px-3 ${
-                    index % 2 === 0 ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''
-                  }`}
-                >
-                  <span>{experience.title}</span>
-                  <button
-                    onClick={() => handleEditExperience(experience)}
-                    aria-label={`Edit ${experience.title}`}
-                    className="w-32 px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:underline bg-transparent border-none shadow-none"
-                  >
-                    Edit
-                  </button>
-                </div>
-              ))}
-            </div>
-            {(editingExperienceId || showAddExperienceForm) && (
-              <form onSubmit={showAddExperienceForm ? handleExperienceSubmit : handleEditingExperienceSubmit} className="mt-6 space-y-4">
-                <div>
-                  <label htmlFor="experience-title" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="experience-title"
-                    value={showAddExperienceForm ? experienceTitle : editingExperienceTitle}
-                    onChange={(e) => showAddExperienceForm ? setExperienceTitle(e.target.value) : setEditingExperienceTitle(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="date" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Date (YYYY-MM-DD)
-                  </label>
-                  <input
-                    type="text"
-                    id="date"
-                    value={showAddExperienceForm ? experienceDate : editingExperienceDate}
-                    onChange={(e) => showAddExperienceForm ? setExperienceDate(e.target.value) : setEditingExperienceDate(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="content" className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    Content
-                  </label>
-                  <textarea
-                    id="content"
-                    value={showAddExperienceForm ? experienceContent : editingExperienceContent}
-                    onChange={(e) => showAddExperienceForm ? setExperienceContent(e.target.value) : setEditingExperienceContent(e.target.value)}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:text-sm"
-                  />
-                </div>
-                <div className="flex justify-between space-x-4">
-                  {editingExperienceId && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (window.confirm('Are you sure you want to delete this experience?')) {
-                          await handleDeleteExperience(editingExperienceId)
-                        }
-                      }}
-                      className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <div className="flex space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddExperienceForm(false)
-                        clearAddExperienceForm()
-                        clearEditingExperience()
-                      }}
-                      className="rounded-md bg-zinc-200 px-3 py-2 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                    >
-                      {showAddExperienceForm ? 'Add Experience' : 'Update Experience'}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
+        <ExperienceManager
+          onSuccess={setSuccessMessage}
+          onError={setErrorMessage}
+        />
 
-        {/* Edit Project Section */}
         <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
           <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             Project Management
