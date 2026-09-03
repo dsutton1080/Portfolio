@@ -1,5 +1,15 @@
+import { type Metadata } from 'next'
+
 import { Button } from '@/components/Button'
 import { Container } from '@/components/Container'
+
+// Without this the tab and any shared link fall back to the site-wide default,
+// "DeRon Sutton - Full-Stack Software Engineer", which reads as though the
+// missing page were the home page. The layout template appends the name.
+export const metadata: Metadata = {
+  title: 'Page not found',
+  description: 'Sorry, we couldn’t find the page you’re looking for.',
+}
 
 export default function NotFound() {
   return (
