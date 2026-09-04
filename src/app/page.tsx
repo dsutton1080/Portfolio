@@ -140,8 +140,7 @@ export default async function Home() {
             I&apos;m DeRon, a software engineer based in St. Louis. At Omni
             Federal I build full-stack applications for federal geospatial
             workflows; before that I spent three years at AT&amp;T on internal
-            tools used across the company. I care about performance and
-            accessibility, and I measure both rather than assuming.
+            tools used across the company.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
