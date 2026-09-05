@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const push = vi.fn()
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
+const refresh = vi.fn()
+const searchParams = new URLSearchParams()
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push, refresh }),
+  useSearchParams: () => searchParams,
+}))
 
 const login = vi.fn()
 vi.mock('@/app/services', () => ({ login: (...a: unknown[]) => login(...a) }))
@@ -28,6 +33,8 @@ async function submit(email = 'a@b.com', password = 'hunter2') {
 describe('Login', () => {
   beforeEach(() => {
     push.mockReset()
+    refresh.mockReset()
+    searchParams.delete('redirectTo')
     login.mockReset()
     loginUser.mockReset()
   })

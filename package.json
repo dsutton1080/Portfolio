@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun --config=./lighthouserc.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "users:list": "node scripts/list-users.mjs",
+    "seed:admin": "node scripts/seed-admin.mjs",
+    "backfill:is-admin": "node scripts/backfill-is-admin.mjs"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
@@ -34,6 +37,7 @@
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.0",
     "fast-glob": "^3.2.11",
+    "jose": "^5.10.0",
     "next": "^14.0.4",
     "next-themes": "^0.2.1",
     "prisma": "^6.9.0",

@@ -1,7 +1,9 @@
 'use client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useContext } from 'react'
 import { UserContext } from '../app/providers'
+import { logout } from '../app/services'
 
 import { ContainerInner, ContainerOuter } from '@/components/Container'
 
@@ -24,6 +26,21 @@ function NavLink({
 
 export function Footer() {
   const { user, setUser } = useContext(UserContext)
+  const router = useRouter()
+
+  // The session is an httpOnly cookie, so only the server can end it. Clearing
+  // the local copy alone would leave the caller still authorised.
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
+    setUser(null)
+    router.push('/')
+    router.refresh()
+  }
+
   return (
     <footer className="mt-32 flex-none">
       <ContainerOuter>
@@ -35,21 +52,25 @@ export function Footer() {
                 <NavLink href="/resume">Resume</NavLink>
                 <NavLink href="/experience">Experience</NavLink>
                 <NavLink href="/projects">Projects</NavLink>
-                <div hidden={user === null || !user?.isAdmin}>
-                  <NavLink href="/admin">Admin</NavLink>
-                </div>
-                <div hidden={user === null}>
-                  <Link
-                    href="/"
-                    onClick={() => setUser(null)}
+                {/*
+                  Rendered conditionally rather than with `hidden=`, which left
+                  the markup in the DOM for every visitor. This is presentation
+                  only either way - /admin and the write routes are guarded
+                  server-side, so a forged localStorage entry now buys a link to
+                  a page that redirects.
+                */}
+                {user?.isAdmin && <NavLink href="/admin">Admin</NavLink>}
+                {user === null ? (
+                  <NavLink href="/login">Login</NavLink>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
                     className="border-0 border-transparent bg-transparent transition hover:text-teal-700 dark:hover:text-teal-400"
                   >
                     Logout
-                  </Link>
-                </div>
-                <div hidden={user !== null}>
-                  <NavLink href="/login">Login</NavLink>
-                </div>
+                  </button>
+                )}
               </div>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 &copy; {new Date().getFullYear()} DeRon Sutton. All rights

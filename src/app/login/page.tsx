@@ -1,12 +1,12 @@
 'use client'
-import React, { useContext, useState, useEffect } from 'react'
+import React, { Suspense, useContext, useState, useEffect } from 'react'
 import { UserContext } from '../providers'
 import { login } from '../services'
 import { SuccessNotification, ErrorNotification } from '@/components/Alerts'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { loginUser } from '@/lib/auth'
 
-export default function Login() {
+function LoginForm() {
   const { setUser } = useContext(UserContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,6 +16,23 @@ export default function Login() {
   const [showError, setShowError] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  /**
+   * Where to go after signing in. The middleware appends `?redirectTo=` when it
+   * turns an anonymous /admin visit away, so the bookmark still works.
+   *
+   * Only same-site paths are honoured. Without the leading-slash check the
+   * parameter is an open redirect, and a `//evil.example` or
+   * `https://evil.example` value would send someone straight from our login
+   * form to an attacker's - which is exactly the flow a phishing page wants.
+   */
+  const redirectTo = (() => {
+    const requested = searchParams.get('redirectTo')
+    if (!requested) return '/'
+    if (!requested.startsWith('/') || requested.startsWith('//')) return '/'
+    return requested
+  })()
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -28,7 +45,10 @@ export default function Login() {
       setUser(response)
       setSuccessMessage('Logged In Successfully')
       setTimeout(() => {
-        router.push('/')
+        router.push(redirectTo)
+        // The nav and any server-rendered admin route need to re-read the new
+        // cookie; without this the cached RSC payload still shows signed-out.
+        router.refresh()
       }, 1000)
     } catch (error) {
       // `login()` rejects on any non-2xx response. Without this catch the
@@ -131,18 +151,21 @@ export default function Login() {
               </button>
             </div>
           </form>
-
-          <p className="mt-10 text-center text-sm text-gray-500 dark:text-gray-400">
-            Dont have an account?{' '}
-            <a
-              href="/signup"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-            >
-              Signup
-            </a>
-          </p>
         </div>
       </div>
     </>
+  )
+}
+
+/**
+ * useSearchParams opts a client component out of prerendering, and Next
+ * requires the bailout to be scoped by a Suspense boundary rather than taking
+ * the whole route with it.
+ */
+export default function Login() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }

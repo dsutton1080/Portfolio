@@ -13,6 +13,9 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
     optimizePackageImports: [],
+    // Enables src/instrumentation.ts, which fails the boot when SESSION_SECRET
+    // is missing rather than letting the server come up without it.
+    instrumentationHook: true,
   },
   // Add output configuration
   output: 'standalone',

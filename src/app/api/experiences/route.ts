@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/apiAuth'
+import { badRequest, readJsonBody, serverError } from '@/lib/apiErrors'
+import { pickExperienceFields } from '@/lib/writableFields'
 
 // GET /api/experiences/all or /api/experiences/:id
 export async function GET(request: Request) {
@@ -13,9 +16,8 @@ export async function GET(request: Request) {
         where: { id },
       })
       return NextResponse.json(experience)
-    } catch (error: any) {
-      console.error(error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error) {
+      return serverError('GET /api/experiences?id', error)
     }
   }
 
@@ -27,54 +29,65 @@ export async function GET(request: Request) {
       orderBy: { date: 'desc' },
     })
     return NextResponse.json(experiences)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('GET /api/experiences', error)
   }
 }
 
 // POST /api/experiences
 export async function POST(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
+  const fields = pickExperienceFields(await readJsonBody(request))
+  if (!fields.ok) return badRequest(fields.error)
+
   try {
-    const experience = await request.json()
     const responseExperience = await prisma.experience.create({
-      data: experience,
+      data: fields.data,
     })
     return NextResponse.json(responseExperience, { status: 201 })
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('POST /api/experiences', error)
   }
 }
 
 // PATCH /api/experiences/:id
 export async function PATCH(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    return badRequest('ID is required')
   }
+
+  const fields = pickExperienceFields(await readJsonBody(request))
+  if (!fields.ok) return badRequest(fields.error)
 
   try {
     const updatedExperience = await prisma.experience.update({
       where: { id },
-      data: await request.json(),
+      data: fields.data,
     })
     return NextResponse.json(updatedExperience)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('PATCH /api/experiences', error)
   }
 }
 
 // DELETE /api/experiences/:id
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    return badRequest('ID is required')
   }
 
   try {
@@ -82,8 +95,7 @@ export async function DELETE(request: Request) {
       where: { id },
     })
     return NextResponse.json(deletedExperience)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('DELETE /api/experiences', error)
   }
-} 
+}
