@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/apiAuth'
+import { badRequest, readJsonBody, serverError } from '@/lib/apiErrors'
+import { pickContentRows, pickSectionFields } from '@/lib/writableFields'
 
 // Add dynamic rendering configuration
 export const dynamic = 'force-dynamic'
@@ -15,9 +18,8 @@ export async function GET(request: Request) {
     try {
       const count = await prisma.section.count()
       return NextResponse.json(count.toString())
-    } catch (error: any) {
-      console.error(error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error) {
+      return serverError('GET /api/sections?path=count', error)
     }
   }
 
@@ -34,9 +36,8 @@ export async function GET(request: Request) {
         },
       })
       return NextResponse.json(headers)
-    } catch (error: any) {
-      console.error(error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error) {
+      return serverError('GET /api/sections?path=headers', error)
     }
   }
 
@@ -65,9 +66,8 @@ export async function GET(request: Request) {
         where: { id },
       })
       return NextResponse.json(section)
-    } catch (error: any) {
-      console.error(error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error) {
+      return serverError('GET /api/sections?id', error)
     }
   }
 
@@ -104,32 +104,45 @@ export async function GET(request: Request) {
     }, {})
 
     return NextResponse.json(groupedSections)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('GET /api/sections', error)
   }
 }
 
 // POST /api/sections
 export async function POST(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
+  const body = await readJsonBody(request)
+  const fields = pickSectionFields(body)
+  if (!fields.ok) return badRequest(fields.error)
+
+  // The client nests the rows as `contents.records`; anything else in that
+  // object is not ours to write.
+  const nested = body?.contents
+  const rows = pickContentRows(
+    typeof nested === 'object' && nested !== null
+      ? (nested as Record<string, unknown>).records
+      : undefined,
+  )
+  if (!rows.ok) return badRequest(rows.error)
+
   try {
-    const section = await request.json()
-    if (!section.order) {
-      const count = await prisma.section.count()
-      section.order = count + 1
-    }
+    const order = fields.data.order ?? (await prisma.section.count()) + 1
+
     const responseSection = await prisma.section.create({
       data: {
-        ...section,
+        ...fields.data,
+        order,
         contents: {
-          create: section.contents.records,
+          create: rows.data,
         },
       },
     })
     return NextResponse.json(responseSection, { status: 201 })
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('POST /api/sections', error)
   }
 }
 
@@ -141,11 +154,14 @@ export async function POST(request: Request) {
 
 // DELETE /api/sections/:id
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    return badRequest('ID is required')
   }
 
   try {
@@ -153,8 +169,7 @@ export async function DELETE(request: Request) {
       where: { id },
     })
     return NextResponse.json(deletedSection)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('DELETE /api/sections', error)
   }
 } 

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/apiAuth'
+import { badRequest, readJsonBody, serverError } from '@/lib/apiErrors'
+import { pickRoleFields } from '@/lib/writableFields'
 
 // GET /api/roles/all or /api/roles/:id
 export async function GET(request: Request) {
@@ -13,9 +16,8 @@ export async function GET(request: Request) {
         where: { id },
       })
       return NextResponse.json(role)
-    } catch (error: any) {
-      console.error(error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error) {
+      return serverError('GET /api/roles?id', error)
     }
   }
 
@@ -27,54 +29,63 @@ export async function GET(request: Request) {
       orderBy: { order: 'asc' },
     })
     return NextResponse.json(roles)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('GET /api/roles', error)
   }
 }
 
 // POST /api/roles
 export async function POST(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
+  const fields = pickRoleFields(await readJsonBody(request))
+  if (!fields.ok) return badRequest(fields.error)
+
   try {
-    const role = await request.json()
-    const responseRole = await prisma.role.create({
-      data: role,
-    })
+    const responseRole = await prisma.role.create({ data: fields.data })
     return NextResponse.json(responseRole, { status: 201 })
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('POST /api/roles', error)
   }
 }
 
 // PATCH /api/roles/:id
 export async function PATCH(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    return badRequest('ID is required')
   }
+
+  const fields = pickRoleFields(await readJsonBody(request))
+  if (!fields.ok) return badRequest(fields.error)
 
   try {
     const updatedRole = await prisma.role.update({
       where: { id },
-      data: await request.json(),
+      data: fields.data,
     })
     return NextResponse.json(updatedRole)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('PATCH /api/roles', error)
   }
 }
 
 // DELETE /api/roles/:id
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    return badRequest('ID is required')
   }
 
   try {
@@ -82,8 +93,7 @@ export async function DELETE(request: Request) {
       where: { id },
     })
     return NextResponse.json(deletedRole)
-  } catch (error: any) {
-    console.error(error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return serverError('DELETE /api/roles', error)
   }
 }

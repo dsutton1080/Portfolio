@@ -257,27 +257,18 @@ export const deleteRole = async (roleId: string) => {
   return response.json()
 }
 
-// User services
-export const getUsers = async () => {
-  const response = await fetch(createApiUrl(`/api/users?path=all`))
-  if (!response.ok) {
-    throw new Error('Failed to fetch users')
-  }
-  return response.json()
-}
-
-export const getUserById = async (userId: string) => {
-  const response = await fetch(createApiUrl(`/api/users?id=${userId}`))
-  if (!response.ok) {
-    throw new Error('Failed to fetch user')
-  }
-  return response.json()
-}
+// Auth services
+//
+// Only sign-in and sign-out. The user list, lookup, update and role-change
+// wrappers that used to live here called handlers with no authorisation on
+// them, and nothing in the UI called the wrappers - see the note at the top of
+// src/app/api/users/route.ts. The content wrappers went the same way: contents
+// are written through /api/sections/[id], and /api/content was an unguarded
+// second way into the same rows that no component used.
 
 // The auth endpoints return a JSON body of the form `{ error: string }` on
-// failure (e.g. "User not found", "Invalid password"). Surface that instead of
-// collapsing every failure into one generic string, so callers can show the
-// user why the request actually failed.
+// failure. Surface that instead of collapsing every failure into one generic
+// string, so callers can show the user why the request actually failed.
 async function errorFromResponse(response: Response, fallback: string) {
   try {
     const body = await response.json()
@@ -286,20 +277,6 @@ async function errorFromResponse(response: Response, fallback: string) {
     // Body was not JSON; fall through to the generic message.
   }
   return new Error(fallback)
-}
-
-export const signup = async (user: any) => {
-  const response = await fetch(createApiUrl(`/api/users?path=signup`), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(user),
-  })
-  if (!response.ok) {
-    throw await errorFromResponse(response, 'Failed to sign up')
-  }
-  return response.json()
 }
 
 export const login = async (credentials: any) => {
@@ -316,85 +293,17 @@ export const login = async (credentials: any) => {
   return response.json()
 }
 
-export const updateUser = async (userId: string, user: any) => {
-  const response = await fetch(createApiUrl(`/api/users?id=${userId}`), {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(user),
-  })
-  if (!response.ok) {
-    throw new Error('Failed to update user')
-  }
-  return response.json()
-}
-
-export const changeUserRole = async (userId: string, role: any) => {
-  const response = await fetch(createApiUrl(`/api/users?id=${userId}&path=change-role`), {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(role),
-  })
-  if (!response.ok) {
-    throw new Error('Failed to change user role')
-  }
-  return response.json()
-}
-
-// Content services
-export const getContents = async () => {
-  const response = await fetch(createApiUrl(`/api/content?path=all`))
-  if (!response.ok) {
-    throw new Error('Failed to fetch contents')
-  }
-  return response.json()
-}
-
-export const getContentById = async (contentId: string) => {
-  const response = await fetch(createApiUrl(`/api/content?id=${contentId}`))
-  if (!response.ok) {
-    throw new Error('Failed to fetch content')
-  }
-  return response.json()
-}
-
-export const createContent = async (content: any) => {
-  const response = await fetch(createApiUrl(`/api/content`), {
+/**
+ * Clearing the localStorage copy is not a logout - the session lives in an
+ * httpOnly cookie that only the server can remove, so this call is what
+ * actually ends it.
+ */
+export const logout = async () => {
+  const response = await fetch(createApiUrl(`/api/users?path=logout`), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(content),
   })
   if (!response.ok) {
-    throw new Error('Failed to create content')
-  }
-  return response.json()
-}
-
-export const updateContent = async (contentId: string, content: any) => {
-  const response = await fetch(createApiUrl(`/api/content?id=${contentId}`), {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(content),
-  })
-  if (!response.ok) {
-    throw new Error('Failed to update content')
-  }
-  return response.json()
-}
-
-export const deleteContent = async (contentId: string) => {
-  const response = await fetch(createApiUrl(`/api/content?id=${contentId}`), {
-    method: 'DELETE',
-  })
-  if (!response.ok) {
-    throw new Error('Failed to delete content')
+    throw new Error('Failed to log out')
   }
   return response.json()
 }

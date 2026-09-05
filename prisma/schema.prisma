@@ -17,7 +17,11 @@ model User {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   email     String  @unique
   firstName String?
-  isAdmin   Boolean @default(true)
+  /// Defaults to false: an omitted field must never grant privilege. Note this
+  /// only governs rows inserted from here on - existing documents keep whatever
+  /// they were written with, which is what scripts/backfill-is-admin.mjs is
+  /// for. Schema changes and data changes are separate jobs.
+  isAdmin   Boolean @default(false)
   lastName  String?
   password  String  @default("")
 }

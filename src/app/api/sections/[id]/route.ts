@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/apiAuth'
+import { badRequest, readJsonBody } from '@/lib/apiErrors'
+import { pickSectionFields } from '@/lib/writableFields'
 
 export async function GET(
   request: Request,
@@ -48,21 +51,30 @@ export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  try {
-    const body = await request.json()
-    const { title, order, header, subHeader, content1, content2, content3 } = body
+  const denied = await requireAdmin()
+  if (denied) return denied
 
+  const body = await readJsonBody(request)
+  const fields = pickSectionFields(body)
+  if (!fields.ok) return badRequest(fields.error)
+
+  // The three content slots are flattened into the section body by the admin
+  // UI rather than nested, so they are allowlisted here rather than by
+  // pickSectionFields. Absent means "leave alone"; a non-string is a mistake
+  // worth reporting rather than silently coercing.
+  const slots = [body?.content1, body?.content2, body?.content3]
+  if (slots.some((slot) => slot !== undefined && typeof slot !== 'string')) {
+    return badRequest('Invalid value for "content1", "content2" or "content3"')
+  }
+  const [content1, content2, content3] = slots as (string | undefined)[]
+
+  try {
     // First update the section
     await prisma.section.update({
       where: {
         id: params.id,
       },
-      data: {
-        title,
-        order,
-        header,
-        subHeader,
-      },
+      data: fields.data,
     })
 
     // Get existing content items
@@ -159,6 +171,9 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     // The onDelete: Cascade in the schema will automatically delete related content
     await prisma.section.delete({

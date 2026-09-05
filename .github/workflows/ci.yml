@@ -12,6 +12,9 @@ jobs:
       # next build does not query the database (all data routes are dynamic and
       # render on request), but Prisma requires the variable to be present.
       DATABASE_URL: mongodb://localhost:27017/placeholder
+      # Nothing in the build or the tests verifies a real session; this only
+      # has to satisfy the length check so the module loads.
+      SESSION_SECRET: ci-placeholder-secret-at-least-32-chars
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
