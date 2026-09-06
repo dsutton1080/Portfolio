@@ -16,6 +16,13 @@ const nextConfig = {
     // Enables src/instrumentation.ts, which fails the boot when SESSION_SECRET
     // is missing rather than letting the server come up without it.
     instrumentationHook: true,
+    // bcrypt loads its .node binary at runtime through node-gyp-build, which
+    // static tracing cannot follow, so the standalone bundle ships the JS
+    // wrapper without the native build and every call throws. Name the
+    // prebuilds explicitly for the one route that hashes passwords.
+    outputFileTracingIncludes: {
+      '/api/users': ['./node_modules/bcrypt/prebuilds/**'],
+    },
   },
   // Add output configuration
   output: 'standalone',
